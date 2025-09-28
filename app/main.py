@@ -133,19 +133,52 @@ async def assess_fraud_risk_endpoint(
 ):
     """简化的欺诈风险评估接口"""
     try:
+        # 数据验证和清理
         transactions = request_data.get('transactions', [])
         accounts = request_data.get('accounts', [])
+        
+        # 确保transactions是列表
+        if not isinstance(transactions, list):
+            transactions = []
         
         if not transactions:
             return {
                 "error": "No transactions provided",
                 "risk_score": 0.5,
                 "risk_level": "unknown",
-                "confidence": 0.3
+                "confidence": 0.3,
+                "transaction_count": 0,
+                "account_count": 0
             }
         
+        # 验证每个交易是字典格式
+        valid_transactions = []
+        for t in transactions:
+            if isinstance(t, dict):
+                valid_transactions.append(t)
+        
+        if not valid_transactions:
+            return {
+                "error": "No valid transactions found (must be dictionary format)",
+                "risk_score": 0.5,
+                "risk_level": "unknown", 
+                "confidence": 0.3,
+                "transaction_count": 0,
+                "account_count": len(accounts) if isinstance(accounts, list) else 0
+            }
+        
+        transactions = valid_transactions
+        
         # 简化的风险评分逻辑
-        total_amount = sum(float(t.get('amount', 0)) for t in transactions)
+        total_amount = 0
+        for t in transactions:
+            try:
+                amount = float(t.get('amount', 0))
+                total_amount += amount
+            except (ValueError, TypeError, AttributeError):
+                # 跳过无法解析金额的交易
+                continue
+                
         avg_amount = total_amount / len(transactions) if transactions else 0
         
         # 基于金额的简单风险评分
@@ -173,13 +206,14 @@ async def assess_fraud_risk_endpoint(
             
         # 特殊商户类型增加风险
         for txn in transactions:
-            merchant = txn.get('merchant_id', '').lower()
-            if any(keyword in merchant for keyword in ['crypto', 'casino', 'gambling']):
-                risk_score += 0.3
-                break
-            elif any(keyword in merchant for keyword in ['online', 'foreign']):
-                risk_score += 0.1
-                break
+            if isinstance(txn, dict):
+                merchant = str(txn.get('merchant_id', '')).lower()
+                if merchant and any(keyword in merchant for keyword in ['crypto', 'casino', 'gambling']):
+                    risk_score += 0.3
+                    break
+                elif merchant and any(keyword in merchant for keyword in ['online', 'foreign']):
+                    risk_score += 0.1
+                    break
                 
         # 限制在0-1范围内
         risk_score = min(1.0, max(0.0, risk_score))
@@ -196,15 +230,15 @@ async def assess_fraud_risk_endpoint(
         confidence = 0.6 + (abs(risk_score - 0.5) * 0.8)
         
         return {
-            "risk_score": risk_score,
+            "risk_score": round(risk_score, 3),
             "risk_level": risk_level,
-            "confidence": min(0.95, confidence),
+            "confidence": round(min(0.95, confidence), 3),
             "transaction_count": len(transactions),
-            "account_count": len(accounts) if accounts else 0,
+            "account_count": len(accounts) if isinstance(accounts, list) else 0,
             "processing_time": 0.05,  # 模拟处理时间
             "enhanced_features": {
-                "total_amount": total_amount,
-                "average_amount": avg_amount,
+                "total_amount": round(total_amount, 2),
+                "average_amount": round(avg_amount, 2),
                 "transaction_time_risk": "high" if current_hour < 6 or current_hour > 22 else "low",
                 "volume_risk": "high" if len(transactions) > 10 else "medium" if len(transactions) > 5 else "low"
             }
@@ -216,7 +250,15 @@ async def assess_fraud_risk_endpoint(
             "risk_score": 0.5,
             "risk_level": "unknown", 
             "confidence": 0.3,
-            "fallback": True
+            "transaction_count": 0,
+            "account_count": 0,
+            "fallback": True,
+            "enhanced_features": {
+                "total_amount": 0,
+                "average_amount": 0,
+                "transaction_time_risk": "unknown",
+                "volume_risk": "unknown"
+            }
         }
 
 @app.get("/api/monitoring/dashboard")
