@@ -241,6 +241,120 @@ async def get_monitoring_dashboard():
         }
     }
 
+@app.post("/api/batch/process")
+async def process_batch_data(request_data: dict):
+    """批量处理数据API"""
+    try:
+        import time
+        start_time = time.time()
+        
+        # 获取批次数据
+        batch_data = request_data.get('batch_data', [])
+        process_mode = request_data.get('process_mode', 'validate')
+        
+        if not batch_data:
+            return {
+                "error": "No batch data provided",
+                "batch_id": None,
+                "results": []
+            }
+        
+        # 生成批次ID
+        batch_id = f"batch_{int(time.time())}_{uuid.uuid4().hex[:8]}"
+        
+        results = []
+        processed_count = 0
+        failed_count = 0
+        
+        for idx, record in enumerate(batch_data):
+            try:
+                # 数据转换和验证
+                transformed_data = {}
+                errors = []
+                
+                # 基本字段映射和验证
+                required_fields = ['account_id', 'amount', 'merchant', 'timestamp']
+                for field in required_fields:
+                    if field in record:
+                        transformed_data[field] = record[field]
+                    else:
+                        errors.append(f"Missing required field: {field}")
+                
+                # 金额验证
+                if 'amount' in record:
+                    try:
+                        amount = float(record['amount'])
+                        if amount <= 0:
+                            errors.append("Amount must be positive")
+                        transformed_data['amount'] = amount
+                    except (ValueError, TypeError):
+                        errors.append("Invalid amount format")
+                
+                # 欺诈风险评估
+                fraud_assessment = None
+                if process_mode in ['risk_assessment', 'full'] and not errors:
+                    fraud_result = await assess_fraud_risk_endpoint({
+                        'transactions': [record],
+                        'accounts': []
+                    })
+                    fraud_assessment = fraud_result
+                
+                # 确定处理状态
+                status = "success" if not errors else "failed"
+                if status == "success":
+                    processed_count += 1
+                else:
+                    failed_count += 1
+                
+                result_item = {
+                    "row_index": idx + 1,
+                    "status": status,
+                    "transformed_data": transformed_data if not errors else None,
+                    "fraud_assessment": fraud_assessment,
+                    "errors": errors if errors else None,
+                    "processing_time": round(time.time() - start_time, 3)
+                }
+                
+                results.append(result_item)
+                
+            except Exception as e:
+                failed_count += 1
+                results.append({
+                    "row_index": idx + 1,
+                    "status": "error",
+                    "transformed_data": None,
+                    "fraud_assessment": None,
+                    "errors": [f"Processing error: {str(e)}"],
+                    "processing_time": round(time.time() - start_time, 3)
+                })
+        
+        total_time = round(time.time() - start_time, 3)
+        
+        return {
+            "batch_id": batch_id,
+            "processing_time": total_time,
+            "total_records": len(batch_data),
+            "processed_count": processed_count,
+            "failed_count": failed_count,
+            "success_rate": round((processed_count / len(batch_data)) * 100, 2) if batch_data else 0,
+            "process_mode": process_mode,
+            "results": results,
+            "summary": {
+                "high_risk_count": len([r for r in results if r.get('fraud_assessment', {}).get('risk_level') == 'high']),
+                "medium_risk_count": len([r for r in results if r.get('fraud_assessment', {}).get('risk_level') == 'medium']),
+                "low_risk_count": len([r for r in results if r.get('fraud_assessment', {}).get('risk_level') == 'low']),
+                "avg_risk_score": round(sum([r.get('fraud_assessment', {}).get('risk_score', 0) for r in results if r.get('fraud_assessment')]) / max(1, len([r for r in results if r.get('fraud_assessment')])), 3)
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "error": f"Batch processing failed: {str(e)}",
+            "batch_id": None,
+            "results": [],
+            "processing_time": 0
+        }
+
 @app.post("/ingest/presign", response_model=PresignResponse)
 async def presign(obj_type: str = Query(..., pattern="^(transactions|entities|labels)$"),
                   ext: str = Query(..., pattern="^(csv|jsonl|parquet)$"),

@@ -613,13 +613,16 @@
 
             try {
                 // 调用批处理API
-                const response = await fetch('/api/batch', {
+                const processMode = document.getElementById('processMode').value;
+                const response = await fetch('/api/batch/process', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer demo_token' // 模拟令牌
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ data: batchData })
+                    body: JSON.stringify({ 
+                        batch_data: batchData,
+                        process_mode: processMode 
+                    })
                 });
 
                 if (!response.ok) {

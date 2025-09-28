@@ -1,0 +1,11 @@
+account_id,amount,merchant,timestamp,transaction_type,location
+acc_001,150.50,grocery_store,2025-09-28T09:30:00Z,purchase,shanghai_cn
+acc_002,3000.00,electronics_store,2025-09-28T14:15:00Z,purchase,beijing_cn
+acc_003,50000.00,crypto_exchange,2025-09-28T23:45:00Z,transfer,unknown
+acc_004,25.00,coffee_shop,2025-09-28T08:20:00Z,purchase,guangzhou_cn
+acc_005,15000.00,jewelry_store,2025-09-28T16:30:00Z,purchase,shenzhen_cn
+acc_006,89.99,restaurant,2025-09-28T12:00:00Z,purchase,shanghai_cn
+acc_007,75000.00,casino_macau,2025-09-28T02:15:00Z,gambling,macau
+acc_008,199.99,online_shopping,2025-09-28T20:45:00Z,purchase,online
+acc_009,500.00,gas_station,2025-09-28T07:30:00Z,purchase,beijing_cn
+acc_010,12000.00,luxury_goods,2025-09-28T18:20:00Z,purchase,shanghai_cn

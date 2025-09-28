@@ -1,0 +1,64 @@
+{
+  "rows": [
+    {
+      "id": "txn_001",
+      "time": "2025-09-28T14:30:00",
+      "payer": "user_12345",
+      "payee": "merchant_001",
+      "amt": 1500.50,
+      "ccy": "CNY",
+      "ch": "mobile_app",
+      "merchant_id": "supermarket_chain_001",
+      "location": "shanghai_cn",
+      "risk_flags": []
+    },
+    {
+      "id": "txn_002", 
+      "time": "2025-09-28T02:15:00",
+      "payer": "user_54321",
+      "payee": "merchant_002",
+      "amt": 15000.00,
+      "ccy": "CNY",
+      "ch": "web",
+      "merchant_id": "crypto_exchange_001",
+      "location": "unknown",
+      "risk_flags": ["high_amount", "unusual_time"]
+    },
+    {
+      "id": "txn_003",
+      "time": "2025-09-28T16:45:00", 
+      "payer": "user_99999",
+      "payee": "merchant_003",
+      "amt": 299.99,
+      "ccy": "CNY",
+      "ch": "pos",
+      "merchant_id": "restaurant_chain_001",
+      "location": "beijing_cn",
+      "risk_flags": []
+    },
+    {
+      "id": "txn_004",
+      "time": "2025-09-28T23:30:00",
+      "payer": "user_11111",
+      "payee": "merchant_004", 
+      "amt": 50000.00,
+      "ccy": "CNY",
+      "ch": "atm",
+      "merchant_id": "casino_macau_001",
+      "location": "macau",
+      "risk_flags": ["high_amount", "gambling", "unusual_time"]
+    },
+    {
+      "id": "txn_005",
+      "time": "2025-09-28T12:00:00",
+      "payer": "user_22222",
+      "payee": "merchant_005",
+      "amt": 89.50,
+      "ccy": "CNY", 
+      "ch": "mobile_app",
+      "merchant_id": "grocery_store_001",
+      "location": "guangzhou_cn",
+      "risk_flags": []
+    }
+  ]
+}
