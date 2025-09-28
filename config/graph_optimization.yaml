@@ -1,0 +1,45 @@
+# 图模型构建优化方案
+
+## 1. 高效图模型构建
+
+### 账户-设备-交易图优化
+```yaml
+# 在 mapping.yaml 中添加图关系配置
+graph_relations:
+  account_device:
+    # 账户-设备关系
+    relationship_type: "uses_device"
+    weight_expr: "frequency_score * trust_score"
+    time_window: "7d"
+    
+  device_transaction:
+    # 设备-交易关系
+    relationship_type: "executes_transaction" 
+    weight_expr: "transaction_amount / daily_avg"
+    
+  account_merchant:
+    # 账户-商户关系
+    relationship_type: "transacts_with"
+    weight_expr: "transaction_frequency"
+
+# 新增核心特征
+enhanced_features:
+  graph_features:
+    # 图结构特征
+    - node_degree: "节点连接度"
+    - clustering_coefficient: "聚类系数"
+    - betweenness_centrality: "介数中心性"
+    - pagerank_score: "PageRank 分数"
+    
+  behavioral_features:
+    # 行为序列特征
+    - transaction_velocity: "交易速度变化"
+    - amount_distribution_shift: "金额分布偏移"
+    - merchant_diversity_score: "商户多样性评分"
+    - time_pattern_anomaly: "时间模式异常度"
+    
+  cross_entity_features:
+    # 跨实体特征
+    - shared_device_count: "共享设备数量"
+    - transaction_pattern_similarity: "交易模式相似度"
+    - network_risk_propagation: "网络风险传播度"

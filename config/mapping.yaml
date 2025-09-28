@@ -1,0 +1,43 @@
+tenant_id: acme
+source_schema_ver: v1
+timezone: Asia/Shanghai
+base_currency: CNY
+mappings:
+  transactions:
+    id: $.id
+    ts:
+      expr: $.time
+      op: to_utc
+    src_entity_id: $.payer
+    dst_entity_id: $.payee
+    amount:
+      expr: $.amt
+      op: to_decimal
+    currency: $.ccy
+    channel:
+      expr: $.ch
+      op: enum_map
+      params:
+        WALLET: WALLET
+        CARD: CARD
+        BANK: BANK
+    merchant_id: $.merchant
+    card_id: $.card
+    geo: $.region
+    extras: $
+dq_rules:
+  required:
+    - id
+    - ts
+    - src_entity_id
+    - dst_entity_id
+    - amount
+    - currency
+  unique_key:
+    - id
+  ranges:
+    amount:
+      min: 0.01
+      max: 100000000
+privacy:
+  mask_card_id: true

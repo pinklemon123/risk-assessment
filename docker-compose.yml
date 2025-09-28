@@ -1,0 +1,12 @@
+﻿version: "3.9"
+services:
+  backend:
+    build: .
+    ports: 
+      - "8080:8080"
+    environment:
+      - API_KEYS=test_key
+      - ALLOWED_TENANTS=acme
+      - MAPPING_PATH=/app/config/mapping.yaml
+    volumes:
+      - ./config:/app/config

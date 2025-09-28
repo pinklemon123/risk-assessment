@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欺诈检测系统 - 批量处理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .navbar h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
+            margin-bottom: 2rem;
+        }
+        
+        .card h2 {
+            margin-bottom: 1.5rem;
+            color: #495057;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            background-color: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: #0056b3;
+            background-color: #e3f2fd;
+        }
+        
+        .upload-area.dragover {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #007bff;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .progress {
+            width: 100%;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .result-table th,
+        .result-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .result-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-success {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .risk-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .risk-low {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .risk-medium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .risk-high {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1>🛡️ 欺诈检测系统</h1>
+            <div class="nav-links">
+                <a href="dashboard.html">控制面板</a>
+                <a href="fraud-detection.html">欺诈检测</a>
+                <a href="monitoring.html">监控中心</a>
+                <a href="index.html">配置管理</a>
+                <a href="batch-process.html" class="active">批量处理</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 批量上传 -->
+        <div class="card">
+            <h2>📂 批量数据处理</h2>
+            
+            <div class="alert alert-info">
+                <strong>支持格式：</strong> JSON, CSV 文件。系统会自动进行数据转换、验证和欺诈风险评估。
+            </div>
+            
+            <div class="grid">
+                <div>
+                    <h4>文件上传</h4>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📁</div>
+                        <div>
+                            <strong>拖拽文件到此处</strong><br>
+                            或 <a href="#" onclick="document.getElementById('fileInput').click()">点击选择文件</a>
+                        </div>
+                        <input type="file" id="fileInput" style="display: none" 
+                               accept=".json,.csv" multiple>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4>直接输入数据</h4>
+                    <textarea id="batchData" class="form-control" 
+                              placeholder='[
+  {
+    "account_id": "acc_001",
+    "amount": 1500,
+    "merchant": "online_store",
+    "timestamp": "2024-01-01T10:00:00Z"
+  },
+  {
+    "account_id": "acc_002", 
+    "amount": 25000,
+    "merchant": "crypto_exchange",
+    "timestamp": "2024-01-01T10:05:00Z"
+  }
+]'></textarea>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <button class="btn btn-primary" id="processBtn" onclick="processBatchData()">
+                    🚀 开始批量处理
+                </button>
+                <button class="btn btn-success" onclick="loadExampleBatch()" style="margin-left: 0.5rem;">
+                    📄 加载示例数据
+                </button>
+            </div>
+        </div>
+
+        <!-- 处理进度 -->
+        <div class="card" id="progressCard" style="display: none;">
+            <h2>⚡ 处理进度</h2>
+            
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div style="text-align: center; margin: 1rem 0;">
+                <div id="progressText">准备中...</div>
+                <div id="progressStats" style="font-size: 0.9rem; color: #6c757d;"></div>
+            </div>
+            
+            <div class="stats-grid" id="processStats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">总记录数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="processedCount">0</div>
+                    <div class="stat-label">已处理</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="successCount">0</div>
+                    <div class="stat-label">成功</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="errorCount">0</div>
+                    <div class="stat-label">失败</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="highRiskCount">0</div>
+                    <div class="stat-label">高风险</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 处理结果 -->
+        <div class="card" id="resultCard" style="display: none;">
+            <h2>📊 处理结果</h2>
+            
+            <div id="resultSummary"></div>
+            
+            <div style="overflow-x: auto; margin-top: 1.5rem;">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>账户ID</th>
+                            <th>金额</th>
+                            <th>处理状态</th>
+                            <th>风险等级</th>
+                            <th>风险评分</th>
+                            <th>详情</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTableBody">
+                        <!-- 结果行将动态插入 -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <button class="btn btn-success" onclick="exportResults()">
+                    📋 导出结果
+                </button>
+                <button class="btn btn-primary" onclick="downloadReport()" style="margin-left: 0.5rem;">
+                    📄 下载详细报告
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentBatchResults = null;
+        let processingStats = {
+            total: 0,
+            processed: 0,
+            success: 0,
+            error: 0,
+            highRisk: 0
+        };
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFileUpload();
+        });
+
+        // 设置文件上传
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            // 拖拽功能
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = Array.from(e.dataTransfer.files);
+                handleFileUpload(files);
+            });
+
+            // 文件选择
+            fileInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                handleFileUpload(files);
+            });
+        }
+
+        // 处理文件上传
+        async function handleFileUpload(files) {
+            if (files.length === 0) return;
+
+            const file = files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                try {
+                    let data;
+                    if (file.name.endsWith('.json')) {
+                        data = JSON.parse(e.target.result);
+                    } else if (file.name.endsWith('.csv')) {
+                        data = parseCSV(e.target.result);
+                    }
+
+                    document.getElementById('batchData').value = JSON.stringify(data, null, 2);
+                    showAlert('文件上传成功', 'success');
+                } catch (error) {
+                    showAlert('文件格式错误: ' + error.message, 'danger');
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        // 简单的CSV解析
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',');
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',');
+                const obj = {};
+                
+                headers.forEach((header, index) => {
+                    obj[header.trim()] = values[index] ? values[index].trim() : '';
+                });
+                
+                data.push(obj);
+            }
+
+            return data;
+        }
+
+        // 处理批量数据
+        async function processBatchData() {
+            const batchDataText = document.getElementById('batchData').value.trim();
+            
+            if (!batchDataText) {
+                showAlert('请输入批量数据或上传文件', 'danger');
+                return;
+            }
+
+            let batchData;
+            try {
+                batchData = JSON.parse(batchDataText);
+            } catch (error) {
+                showAlert('数据格式错误: ' + error.message, 'danger');
+                return;
+            }
+
+            if (!Array.isArray(batchData)) {
+                showAlert('数据必须是数组格式', 'danger');
+                return;
+            }
+
+            // 开始处理
+            const processBtn = document.getElementById('processBtn');
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<span class="loading"></span>处理中...';
+
+            // 显示进度卡片
+            const progressCard = document.getElementById('progressCard');
+            progressCard.style.display = 'block';
+
+            // 初始化统计
+            processingStats = {
+                total: batchData.length,
+                processed: 0,
+                success: 0,
+                error: 0,
+                highRisk: 0
+            };
+            
+            updateProgressDisplay();
+
+            try {
+                // 调用批处理API
+                const response = await fetch('/api/batch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer demo_token' // 模拟令牌
+                    },
+                    body: JSON.stringify({ data: batchData })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                currentBatchResults = result;
+                
+                // 更新统计
+                processingStats.processed = result.processed_count + result.failed_count;
+                processingStats.success = result.processed_count;
+                processingStats.error = result.failed_count;
+                
+                // 计算高风险交易数
+                processingStats.highRisk = result.results.filter(r => 
+                    r.fraud_assessment && r.fraud_assessment.risk_level === 'high'
+                ).length;
+
+                updateProgressDisplay();
+                showResults(result);
+
+            } catch (error) {
+                console.error('批处理失败:', error);
+                showAlert('批处理失败: ' + error.message, 'danger');
+                
+                // 模拟处理结果以便演示
+                simulateBatchProcessing(batchData);
+            } finally {
+                processBtn.disabled = false;
+                processBtn.innerHTML = '🚀 开始批量处理';
+            }
+        }
+
+        // 模拟批处理（当API不可用时）
+        function simulateBatchProcessing(batchData) {
+            let processed = 0;
+            
+            const processInterval = setInterval(() => {
+                processed++;
+                
+                processingStats.processed = processed;
+                processingStats.success = Math.floor(processed * 0.85);
+                processingStats.error = processed - processingStats.success;
+                processingStats.highRisk = Math.floor(processed * 0.15);
+                
+                updateProgressDisplay();
+                
+                if (processed >= batchData.length) {
+                    clearInterval(processInterval);
+                    
+                    // 生成模拟结果
+                    const mockResults = generateMockResults(batchData);
+                    currentBatchResults = mockResults;
+                    showResults(mockResults);
+                }
+            }, 200);
+        }
+
+        // 生成模拟结果
+        function generateMockResults(batchData) {
+            const results = batchData.map((item, index) => {
+                const success = Math.random() > 0.15; // 85% 成功率
+                
+                if (success) {
+                    const riskScore = Math.random();
+                    let riskLevel = 'low';
+                    if (riskScore > 0.7) riskLevel = 'high';
+                    else if (riskScore > 0.4) riskLevel = 'medium';
+                    
+                    return {
+                        row_index: index,
+                        status: 'success',
+                        transformed_data: item,
+                        fraud_assessment: {
+                            risk_score: riskScore,
+                            risk_level: riskLevel,
+                            confidence: Math.random() * 0.3 + 0.7
+                        }
+                    };
+                } else {
+                    return {
+                        row_index: index,
+                        status: 'failed',
+                        errors: ['数据验证失败']
+                    };
+                }
+            });
+
+            return {
+                batch_id: 'batch_' + Date.now(),
+                processed_count: results.filter(r => r.status === 'success').length,
+                failed_count: results.filter(r => r.status === 'failed').length,
+                results: results,
+                processing_time: Math.random() * 5 + 2
+            };
+        }
+
+        // 更新进度显示
+        function updateProgressDisplay() {
+            const progress = processingStats.total > 0 ? 
+                (processingStats.processed / processingStats.total) * 100 : 0;
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = 
+                `处理进度: ${processingStats.processed}/${processingStats.total} (${progress.toFixed(1)}%)`;
+            
+            document.getElementById('totalCount').textContent = processingStats.total;
+            document.getElementById('processedCount').textContent = processingStats.processed;
+            document.getElementById('successCount').textContent = processingStats.success;
+            document.getElementById('errorCount').textContent = processingStats.error;
+            document.getElementById('highRiskCount').textContent = processingStats.highRisk;
+        }
+
+        // 显示结果
+        function showResults(result) {
+            const resultCard = document.getElementById('resultCard');
+            const resultSummary = document.getElementById('resultSummary');
+            const resultTableBody = document.getElementById('resultTableBody');
+            
+            resultCard.style.display = 'block';
+            
+            // 结果摘要
+            const successRate = ((result.processed_count / (result.processed_count + result.failed_count)) * 100).toFixed(1);
+            resultSummary.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>批处理完成！</strong><br>
+                    批次ID: ${result.batch_id}<br>
+                    处理时间: ${result.processing_time?.toFixed(2) || 'N/A'} 秒<br>
+                    成功率: ${successRate}% (${result.processed_count}/${result.processed_count + result.failed_count})
+                </div>
+            `;
+            
+            // 结果表格
+            resultTableBody.innerHTML = result.results.map(item => {
+                const accountId = item.transformed_data?.account_id || item.row_index;
+                const amount = item.transformed_data?.amount || 'N/A';
+                
+                let statusBadge, riskBadge = '', riskScore = '';
+                
+                if (item.status === 'success') {
+                    statusBadge = '<span class="status-badge status-success">成功</span>';
+                    
+                    if (item.fraud_assessment) {
+                        const assessment = item.fraud_assessment;
+                        riskScore = (assessment.risk_score * 100).toFixed(1) + '%';
+                        
+                        if (assessment.risk_level === 'high') {
+                            riskBadge = '<span class="risk-badge risk-high">高风险</span>';
+                        } else if (assessment.risk_level === 'medium') {
+                            riskBadge = '<span class="risk-badge risk-medium">中风险</span>';
+                        } else {
+                            riskBadge = '<span class="risk-badge risk-low">低风险</span>';
+                        }
+                    }
+                } else {
+                    statusBadge = '<span class="status-badge status-error">失败</span>';
+                    riskBadge = '<span class="status-badge status-warning">未评估</span>';
+                }
+                
+                const errors = item.errors ? item.errors.join(', ') : '';
+                
+                return `
+                    <tr>
+                        <td>${item.row_index + 1}</td>
+                        <td>${accountId}</td>
+                        <td>${amount}</td>
+                        <td>${statusBadge}</td>
+                        <td>${riskBadge}</td>
+                        <td>${riskScore}</td>
+                        <td>${errors}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 加载示例数据
+        function loadExampleBatch() {
+            const exampleData = [
+                {
+                    "account_id": "acc_001",
+                    "amount": 150,
+                    "merchant": "grocery_store",
+                    "timestamp": "2024-01-01T09:30:00Z",
+                    "transaction_type": "purchase"
+                },
+                {
+                    "account_id": "acc_002", 
+                    "amount": 3000,
+                    "merchant": "electronics_store",
+                    "timestamp": "2024-01-01T14:15:00Z",
+                    "transaction_type": "purchase"
+                },
+                {
+                    "account_id": "acc_003",
+                    "amount": 50000,
+                    "merchant": "crypto_exchange",
+                    "timestamp": "2024-01-01T23:45:00Z",
+                    "transaction_type": "transfer"
+                },
+                {
+                    "account_id": "acc_004",
+                    "amount": 25,
+                    "merchant": "coffee_shop", 
+                    "timestamp": "2024-01-01T08:20:00Z",
+                    "transaction_type": "purchase"
+                },
+                {
+                    "account_id": "acc_005",
+                    "amount": 15000,
+                    "merchant": "jewelry_store",
+                    "timestamp": "2024-01-01T16:30:00Z",
+                    "transaction_type": "purchase"
+                }
+            ];
+            
+            document.getElementById('batchData').value = JSON.stringify(exampleData, null, 2);
+        }
+
+        // 导出结果
+        function exportResults() {
+            if (!currentBatchResults) {
+                showAlert('没有可导出的结果', 'danger');
+                return;
+            }
+            
+            const csvContent = generateCSV(currentBatchResults);
+            downloadFile(csvContent, 'batch-results.csv', 'text/csv');
+        }
+
+        // 下载详细报告
+        function downloadReport() {
+            if (!currentBatchResults) {
+                showAlert('没有可下载的报告', 'danger');
+                return;
+            }
+            
+            const report = {
+                summary: {
+                    batch_id: currentBatchResults.batch_id,
+                    processing_time: currentBatchResults.processing_time,
+                    total_records: currentBatchResults.results.length,
+                    success_count: currentBatchResults.processed_count,
+                    failed_count: currentBatchResults.failed_count,
+                    high_risk_count: processingStats.highRisk,
+                    timestamp: new Date().toISOString()
+                },
+                detailed_results: currentBatchResults.results
+            };
+            
+            const jsonContent = JSON.stringify(report, null, 2);
+            downloadFile(jsonContent, `batch-report-${currentBatchResults.batch_id}.json`, 'application/json');
+        }
+
+        // 生成CSV
+        function generateCSV(results) {
+            const headers = ['序号', '账户ID', '金额', '状态', '风险等级', '风险评分', '错误信息'];
+            const rows = [headers.join(',')];
+            
+            results.results.forEach((item, index) => {
+                const row = [
+                    index + 1,
+                    item.transformed_data?.account_id || item.row_index,
+                    item.transformed_data?.amount || 'N/A',
+                    item.status,
+                    item.fraud_assessment?.risk_level || 'N/A',
+                    item.fraud_assessment ? (item.fraud_assessment.risk_score * 100).toFixed(1) + '%' : 'N/A',
+                    item.errors ? item.errors.join('; ') : ''
+                ];
+                rows.push(row.join(','));
+            });
+            
+            return rows.join('\n');
+        }
+
+        // 下载文件
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        // 显示提示
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `<strong>${type === 'success' ? '成功' : type === 'danger' ? '错误' : '信息'}:</strong> ${message}`;
+            
+            document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.card'));
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

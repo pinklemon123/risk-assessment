@@ -1,0 +1,128 @@
+# 连接器配置模板
+
+## HTTP 连接器配置
+http_connectors:
+  fraud_detection_api:
+    base_url: "https://api.fraud-detection.com"
+    endpoints:
+      real_time_scoring: "/api/v1/score"
+      batch_analysis: "/api/v1/batch"
+      model_feedback: "/api/v1/feedback"
+    
+    authentication:
+      type: "bearer_token"
+      token_endpoint: "/auth/token"
+      credentials:
+        client_id: "${CLIENT_ID}"
+        client_secret: "${CLIENT_SECRET}"
+    
+    retry_policy:
+      max_retries: 3
+      backoff_strategy: "exponential"
+      base_delay_ms: 1000
+      max_delay_ms: 30000
+    
+    timeout_config:
+      connection_timeout: 5000
+      read_timeout: 30000
+      
+    rate_limiting:
+      requests_per_second: 100
+      burst_capacity: 200
+
+## Kafka 连接器配置  
+kafka_connectors:
+  transaction_stream:
+    bootstrap_servers:
+      - "kafka-01:9092"
+      - "kafka-02:9092" 
+      - "kafka-03:9092"
+      
+    topics:
+      input: "transactions.raw"
+      output: "transactions.scored"
+      dlq: "transactions.failed"
+      
+    consumer_config:
+      group_id: "fraud-detection-consumer"
+      auto_offset_reset: "latest"
+      enable_auto_commit: false
+      max_poll_records: 500
+      session_timeout_ms: 30000
+      
+    producer_config:
+      acks: "all"
+      retries: 3
+      batch_size: 16384
+      linger_ms: 5
+      compression_type: "snappy"
+      
+    security:
+      protocol: "SASL_SSL"
+      mechanism: "SCRAM-SHA-256"
+      username: "${KAFKA_USERNAME}"
+      password: "${KAFKA_PASSWORD}"
+
+## JDBC 连接器配置
+jdbc_connectors:
+  risk_database:
+    driver: "postgresql"
+    connection_string: "postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}"
+    credentials:
+      username: "${DB_USERNAME}"
+      password: "${DB_PASSWORD}"
+      
+    connection_pool:
+      initial_size: 5
+      min_idle: 2
+      max_active: 20
+      max_wait: 30000
+      
+    queries:
+      get_risk_profile: |
+        SELECT account_id, risk_score, last_updated
+        FROM risk_profiles 
+        WHERE account_id = ? AND last_updated > ?
+        
+      update_risk_score: |
+        INSERT INTO risk_scores (account_id, score, model_version, created_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT (account_id) DO UPDATE SET
+        score = EXCLUDED.score,
+        model_version = EXCLUDED.model_version,
+        updated_at = EXCLUDED.created_at
+        
+      get_transaction_history: |
+        SELECT * FROM transactions 
+        WHERE account_id = ? 
+        AND transaction_date >= ?
+        ORDER BY transaction_date DESC
+        LIMIT ?
+
+## Redis 连接器配置
+redis_connectors:
+  feature_cache:
+    cluster_nodes:
+      - "redis-01:6379"
+      - "redis-02:6379" 
+      - "redis-03:6379"
+      
+    auth:
+      password: "${REDIS_PASSWORD}"
+      
+    connection_pool:
+      max_connections: 50
+      max_idle: 10
+      
+    cache_policies:
+      user_features:
+        ttl: 3600  # 1小时
+        namespace: "user_feat:"
+        
+      device_features:
+        ttl: 1800  # 30分钟
+        namespace: "device_feat:"
+        
+      risk_scores:
+        ttl: 300   # 5分钟
+        namespace: "risk_score:"

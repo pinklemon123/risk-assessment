@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapping 可视化编辑器</title>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .btn-primary {
+            background: #000;
+            color: white;
+            border-color: #000;
+        }
+        
+        .btn-primary:hover {
+            background: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+        }
+        
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+            color: #666;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+        
+        .mapping-table {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .mapping-header {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            gap: 1rem;
+        }
+        
+        .mapping-row {
+            padding: 0.75rem;
+            border-top: 1px solid #eee;
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .field-name {
+            font-family: monospace;
+            background: #f5f5f5;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+        
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+        
+        .tag button {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 0;
+            margin-left: 0.25rem;
+        }
+        
+        .tag button:hover {
+            color: #e74c3c;
+        }
+        
+        .add-field {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .add-field input {
+            flex: 1;
+        }
+        
+        .yaml-preview {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            white-space: pre-wrap;
+            overflow: auto;
+            max-height: 400px;
+            border: 1px solid #eee;
+        }
+        
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>Mapping 可视化编辑器</h1>
+            <div class="header-buttons">
+                <button class="btn" onclick="loadFromServer()">
+                    <span id="load-text">从服务器加载</span>
+                </button>
+                <button class="btn btn-primary" onclick="saveToServer()">
+                    <span id="save-text">保存</span>
+                </button>
+                <button class="btn" onclick="downloadYaml()">下载 YAML</button>
+                <input type="file" id="file-input" accept=".yml,.yaml" style="display: none;" onchange="uploadYaml(event)">
+                <button class="btn" onclick="document.getElementById('file-input').click()">上传 YAML</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="error-message" class="error hidden"></div>
+
+        <!-- 基本设置 -->
+        <div class="card">
+            <h2>基本设置</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>tenant_id</label>
+                    <input type="text" id="tenant_id" onchange="updateConfig()">
+                </div>
+                <div class="form-group">
+                    <label>source_schema_ver</label>
+                    <input type="text" id="source_schema_ver" onchange="updateConfig()">
+                </div>
+                <div class="form-group">
+                    <label>timezone</label>
+                    <input type="text" id="timezone" onchange="updateConfig()">
+                </div>
+                <div class="form-group">
+                    <label>base_currency</label>
+                    <input type="text" id="base_currency" onchange="updateConfig()">
+                </div>
+                <div class="form-group">
+                    <label>fx_table_ref</label>
+                    <input type="text" id="fx_table_ref" placeholder="gs://bucket/ref/fx_daily.parquet" onchange="updateConfig()">
+                </div>
+            </div>
+        </div>
+
+        <!-- 交易映射 -->
+        <div class="card">
+            <h2>交易字段映射</h2>
+            <p style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
+                支持从源 JSON 路径（如 $.id）映射，或使用操作（to_utc / to_decimal / enum_map）。
+            </p>
+            <div class="mapping-table">
+                <div class="mapping-header">
+                    <div>字段</div>
+                    <div>映射规则</div>
+                    <div>操作</div>
+                </div>
+                <div id="mapping-rows"></div>
+            </div>
+        </div>
+
+        <!-- 数据质量规则 -->
+        <div class="card">
+            <h2>数据质量规则</h2>
+            <div class="form-grid">
+                <div>
+                    <label>必填字段</label>
+                    <div class="tags" id="required-tags"></div>
+                    <div class="add-field">
+                        <input type="text" id="new-required" placeholder="字段名">
+                        <button class="btn" onclick="addRequiredField()">添加</button>
+                    </div>
+                </div>
+                <div>
+                    <label>金额范围</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                        <div class="form-group">
+                            <label>最小值</label>
+                            <input type="number" id="amount_min" onchange="updateConfig()">
+                        </div>
+                        <div class="form-group">
+                            <label>最大值</label>
+                            <input type="number" id="amount_max" onchange="updateConfig()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 隐私设置 -->
+        <div class="card">
+            <h2>隐私设置</h2>
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;">
+                <input type="checkbox" id="mask_card_id" onchange="updateConfig()">
+                脱敏 card_id （哈希）
+            </label>
+        </div>
+
+        <!-- YAML 预览 -->
+        <div class="card">
+            <h2>YAML 预览</h2>
+            <div class="yaml-preview" id="yaml-preview"></div>
+        </div>
+    </div>
+
+    <script>
+        // 默认配置
+        let config = {
+            tenant_id: "",
+            source_schema_ver: "v1",
+            timezone: "UTC",
+            base_currency: "CNY",
+            mappings: {
+                transactions: {}
+            },
+            dq_rules: {
+                required: ["id", "ts", "src_entity_id", "dst_entity_id", "amount", "currency"],
+                unique_key: ["id"],
+                ranges: {
+                    amount: { min: 0.01, max: 100000000 }
+                }
+            },
+            privacy: {
+                mask_card_id: true
+            }
+        };
+
+        // 常用字段
+        const commonFields = [
+            "id", "ts", "src_entity_id", "dst_entity_id", 
+            "amount", "currency", "channel", "merchant_id", 
+            "card_id", "geo", "extras"
+        ];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromServer();
+        });
+
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+            setTimeout(() => {
+                errorEl.classList.add('hidden');
+            }, 5000);
+        }
+
+        function updateUI() {
+            // 基本设置
+            document.getElementById('tenant_id').value = config.tenant_id || '';
+            document.getElementById('source_schema_ver').value = config.source_schema_ver || 'v1';
+            document.getElementById('timezone').value = config.timezone || 'UTC';
+            document.getElementById('base_currency').value = config.base_currency || 'CNY';
+            document.getElementById('fx_table_ref').value = config.fx_table_ref || '';
+
+            // 数据质量规则
+            updateRequiredTags();
+            document.getElementById('amount_min').value = config.dq_rules?.ranges?.amount?.min || 0.01;
+            document.getElementById('amount_max').value = config.dq_rules?.ranges?.amount?.max || 100000000;
+
+            // 隐私设置
+            document.getElementById('mask_card_id').checked = config.privacy?.mask_card_id || false;
+
+            // 映射表格
+            updateMappingTable();
+
+            // YAML 预览
+            updateYamlPreview();
+        }
+
+        function updateRequiredTags() {
+            const container = document.getElementById('required-tags');
+            const required = config.dq_rules?.required || [];
+            
+            container.innerHTML = required.map(field => `
+                <div class="tag">
+                    ${field}
+                    <button onclick="removeRequiredField('${field}')">×</button>
+                </div>
+            `).join('');
+        }
+
+        function updateMappingTable() {
+            const container = document.getElementById('mapping-rows');
+            const mappings = config.mappings?.transactions || {};
+            
+            container.innerHTML = commonFields.map(field => {
+                const mapping = mappings[field] || '';
+                const isSimple = typeof mapping === 'string';
+                
+                return `
+                    <div class="mapping-row">
+                        <div class="field-name">${field}</div>
+                        <div>
+                            ${isSimple ? `
+                                <input type="text" value="${mapping}" 
+                                       placeholder="如 $.id" 
+                                       onchange="updateMapping('${field}', this.value)">
+                            ` : `
+                                <div style="display: grid; grid-template-columns: 2fr 1fr 2fr; gap: 0.5rem; align-items: center;">
+                                    <input type="text" value="${mapping.expr || ''}" 
+                                           placeholder="表达式" 
+                                           onchange="updateComplexMapping('${field}', 'expr', this.value)">
+                                    <select onchange="updateComplexMapping('${field}', 'op', this.value)">
+                                        <option value="">无操作</option>
+                                        <option value="to_utc" ${mapping.op === 'to_utc' ? 'selected' : ''}>to_utc</option>
+                                        <option value="to_decimal" ${mapping.op === 'to_decimal' ? 'selected' : ''}>to_decimal</option>
+                                        <option value="enum_map" ${mapping.op === 'enum_map' ? 'selected' : ''}>enum_map</option>
+                                    </select>
+                                    <input type="text" value="${JSON.stringify(mapping.params || {})}" 
+                                           placeholder='{"key": "value"}' 
+                                           onchange="updateComplexMapping('${field}', 'params', this.value)">
+                                </div>
+                            `}
+                        </div>
+                        <div>
+                            <button class="btn" style="font-size: 0.75rem;" 
+                                    onclick="toggleMappingType('${field}')">
+                                ${isSimple ? '高级' : '简单'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateYamlPreview() {
+            try {
+                const yamlStr = jsyaml.dump(config, { noRefs: true, lineWidth: 120 });
+                document.getElementById('yaml-preview').textContent = yamlStr;
+            } catch (e) {
+                document.getElementById('yaml-preview').textContent = 'YAML 生成错误: ' + e.message;
+            }
+        }
+
+        function updateConfig() {
+            // 基本设置
+            config.tenant_id = document.getElementById('tenant_id').value;
+            config.source_schema_ver = document.getElementById('source_schema_ver').value || 'v1';
+            config.timezone = document.getElementById('timezone').value || 'UTC';
+            config.base_currency = document.getElementById('base_currency').value || 'CNY';
+            config.fx_table_ref = document.getElementById('fx_table_ref').value;
+
+            // 数据质量规则
+            if (!config.dq_rules) config.dq_rules = {};
+            if (!config.dq_rules.ranges) config.dq_rules.ranges = {};
+            if (!config.dq_rules.ranges.amount) config.dq_rules.ranges.amount = {};
+            
+            config.dq_rules.ranges.amount.min = parseFloat(document.getElementById('amount_min').value) || 0.01;
+            config.dq_rules.ranges.amount.max = parseFloat(document.getElementById('amount_max').value) || 100000000;
+
+            // 隐私设置
+            if (!config.privacy) config.privacy = {};
+            config.privacy.mask_card_id = document.getElementById('mask_card_id').checked;
+
+            updateYamlPreview();
+        }
+
+        function updateMapping(field, value) {
+            if (!config.mappings) config.mappings = {};
+            if (!config.mappings.transactions) config.mappings.transactions = {};
+            
+            config.mappings.transactions[field] = value;
+            updateYamlPreview();
+        }
+
+        function updateComplexMapping(field, prop, value) {
+            if (!config.mappings) config.mappings = {};
+            if (!config.mappings.transactions) config.mappings.transactions = {};
+            if (!config.mappings.transactions[field] || typeof config.mappings.transactions[field] === 'string') {
+                config.mappings.transactions[field] = {};
+            }
+
+            if (prop === 'params') {
+                try {
+                    config.mappings.transactions[field][prop] = value ? JSON.parse(value) : {};
+                } catch (e) {
+                    return; // 无效的 JSON
+                }
+            } else {
+                config.mappings.transactions[field][prop] = value;
+            }
+            updateYamlPreview();
+        }
+
+        function toggleMappingType(field) {
+            if (!config.mappings) config.mappings = {};
+            if (!config.mappings.transactions) config.mappings.transactions = {};
+            
+            const current = config.mappings.transactions[field];
+            if (typeof current === 'string') {
+                config.mappings.transactions[field] = { expr: current };
+            } else {
+                config.mappings.transactions[field] = current?.expr || '';
+            }
+            updateMappingTable();
+            updateYamlPreview();
+        }
+
+        function addRequiredField() {
+            const input = document.getElementById('new-required');
+            const field = input.value.trim();
+            if (!field) return;
+
+            if (!config.dq_rules) config.dq_rules = {};
+            if (!config.dq_rules.required) config.dq_rules.required = [];
+            
+            if (!config.dq_rules.required.includes(field)) {
+                config.dq_rules.required.push(field);
+                updateRequiredTags();
+                updateYamlPreview();
+            }
+            input.value = '';
+        }
+
+        function removeRequiredField(field) {
+            if (config.dq_rules?.required) {
+                config.dq_rules.required = config.dq_rules.required.filter(f => f !== field);
+                updateRequiredTags();
+                updateYamlPreview();
+            }
+        }
+
+        async function loadFromServer() {
+            const loadBtn = document.getElementById('load-text');
+            loadBtn.textContent = '加载中...';
+            
+            try {
+                const response = await fetch('/api/admin/mapping');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const yamlText = await response.text();
+                config = jsyaml.load(yamlText) || config;
+                updateUI();
+            } catch (error) {
+                showError('加载失败：' + error.message);
+            } finally {
+                loadBtn.textContent = '从服务器加载';
+            }
+        }
+
+        async function saveToServer() {
+            const saveBtn = document.getElementById('save-text');
+            saveBtn.textContent = '保存中...';
+            
+            try {
+                const yamlContent = jsyaml.dump(config, { noRefs: true, lineWidth: 120 });
+                const response = await fetch('/api/admin/mapping', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: yamlContent })
+                });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                // 成功提示
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = '保存成功！';
+                setTimeout(() => {
+                    saveBtn.textContent = '保存';
+                }, 2000);
+            } catch (error) {
+                showError('保存失败：' + error.message);
+            } finally {
+                if (saveBtn.textContent === '保存中...') {
+                    saveBtn.textContent = '保存';
+                }
+            }
+        }
+
+        function downloadYaml() {
+            const yamlContent = jsyaml.dump(config, { noRefs: true, lineWidth: 120 });
+            const blob = new Blob([yamlContent], { type: 'text/yaml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mapping_${config.tenant_id || 'tenant'}_${config.source_schema_ver || 'v1'}.yaml`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        async function uploadYaml(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                config = jsyaml.load(text) || config;
+                updateUI();
+            } catch (error) {
+                showError('解析 YAML 失败：' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
