@@ -11,432 +11,423 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: #f5f5f5;
+            color: #1f1f1f;
+            min-height: 100vh;
         }
-        
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e5e5;
             padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        
-        .navbar-content {
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .navbar h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-        
-        .nav-links {
-            display: flex;
             gap: 2rem;
         }
-        
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
         .nav-links a {
-            color: white;
+            color: #1f1f1f;
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: background-color 0.3s;
+            padding: 0.4rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
         }
-        
-        .nav-links a:hover, .nav-links a.active {
-            background-color: rgba(255,255,255,0.2);
+
+        .nav-links a:hover {
+            background: #efefef;
         }
-        
+
+        .nav-links a.active {
+            background: #111111;
+            color: #ffffff;
+        }
+
         .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
         }
-        
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .card {
-            background: white;
-            border-radius: 12px;
+            background: #ffffff;
+            border-radius: 14px;
             padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid #e9ecef;
+            border: 1px solid #e9e9e9;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
         }
-        
+
         .card h3 {
-            margin-bottom: 1rem;
-            color: #495057;
-            font-size: 1.2rem;
+            font-size: 1.05rem;
             font-weight: 600;
+            margin-bottom: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        
+
         .metric-value {
             font-size: 2rem;
-            font-weight: 700;
-            margin: 0.5rem 0;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+            color: #111111;
         }
-        
-        .metric-value.success { color: #28a745; }
-        .metric-value.warning { color: #ffc107; }
-        .metric-value.danger { color: #dc3545; }
-        .metric-value.info { color: #007bff; }
-        
+
         .metric-label {
-            color: #6c757d;
-            font-size: 0.9rem;
+            color: #6c6c6c;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
-        
+
         .chart-container {
             position: relative;
-            height: 250px;
-            margin: 1rem 0;
+            height: 240px;
         }
-        
+
         .alert {
-            padding: 1rem;
-            border-radius: 6px;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            border: 1px solid #e5e5e5;
+            background: #f9f9f9;
             margin-bottom: 1rem;
-            border-left: 4px solid;
         }
-        
+
+        .alert h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+        }
+
+        .alert p {
+            font-size: 0.85rem;
+            color: #515151;
+        }
+
+        .alert-meta {
+            font-size: 0.75rem;
+            color: #898989;
+            margin-top: 0.5rem;
+        }
+
         .alert-critical {
-            background-color: #f8d7da;
-            border-left-color: #dc3545;
-            color: #721c24;
+            border-left: 4px solid #111111;
         }
-        
+
         .alert-warning {
-            background-color: #fff3cd;
-            border-left-color: #ffc107;
-            color: #856404;
+            border-left: 4px solid #555555;
         }
-        
+
         .alert-info {
-            background-color: #d1ecf1;
-            border-left-color: #17a2b8;
-            color: #0c5460;
+            border-left: 4px solid #888888;
         }
-        
+
         .status-indicator {
             display: inline-block;
             width: 10px;
             height: 10px;
             border-radius: 50%;
             margin-right: 8px;
+            background-color: #111111;
         }
-        
-        .status-indicator.online { background-color: #28a745; }
-        .status-indicator.warning { background-color: #ffc107; }
-        .status-indicator.offline { background-color: #dc3545; }
-        
+
+        .status-indicator.warning {
+            background-color: #888888;
+        }
+
+        .status-indicator.offline {
+            background-color: #c7c7c7;
+        }
+
         .log-entry {
-            font-family: 'Monaco', 'Courier New', monospace;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
             font-size: 0.8rem;
-            padding: 0.5rem;
-            background-color: #f8f9fa;
-            border-radius: 4px;
+            padding: 0.6rem 0.75rem;
+            border-radius: 8px;
+            background-color: #f5f5f5;
+            border: 1px solid #ebebeb;
             margin-bottom: 0.5rem;
-            border-left: 3px solid #007bff;
         }
-        
+
         .log-entry.error {
-            border-left-color: #dc3545;
-            background-color: #fff5f5;
+            border-left: 4px solid #111111;
         }
-        
+
         .log-entry.warning {
-            border-left-color: #ffc107;
-            background-color: #fffbf0;
+            border-left: 4px solid #555555;
         }
-        
+
         .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
+            padding: 0.55rem 1.2rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            background: #ffffff;
+            color: #1f1f1f;
+            font-size: 0.85rem;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-primary {
+            background: #111111;
+            color: #ffffff;
+            border-color: #111111;
+        }
+
+        .btn-primary:hover {
+            background: #2d2d2d;
+        }
+
+        .btn-ghost {
+            border-color: transparent;
+            background: transparent;
+        }
+
+        .table-wrapper {
+            border: 1px solid #e9e9e9;
+            border-radius: 12px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
             font-size: 0.9rem;
         }
-        
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-        
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-        
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-        
-        .refresh-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #007bff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 0.5rem;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #e9ecef;
-            margin-bottom: 1rem;
-        }
-        
-        .tab {
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        
-        .tab.active {
-            border-bottom-color: #007bff;
-            color: #007bff;
+
+        th {
+            background: #fafafa;
             font-weight: 600;
+            color: #3f3f3f;
         }
-        
-        .tab-content {
-            display: none;
+
+        .table-footer {
+            padding: 0.85rem 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            background: #fafafa;
         }
-        
-        .tab-content.active {
-            display: block;
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1.5rem 1rem 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-content">
-            <h1>🛡️ 欺诈检测系统</h1>
-            <div class="nav-links">
-                <a href="dashboard.html">控制面板</a>
-                <a href="fraud-detection.html">欺诈检测</a>
-                <a href="monitoring.html" class="active">监控中心</a>
-                <a href="index.html">配置管理</a>
-                <a href="batch-process.html">批量处理</a>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>🛡️ 欺诈检测系统</h1>
+                <nav class="nav-links">
+                    <a href="dashboard.html">控制面板</a>
+                    <a href="fraud-detection.html">欺诈检测</a>
+                    <a href="monitoring.html" class="active">监控中心</a>
+                    <a href="index.html">配置管理</a>
+                    <a href="batch-process.html">批量处理</a>
+                </nav>
+            </div>
+            <div>
+                <button class="btn" onclick="refreshMonitoring()">刷新数据</button>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="container">
-        <!-- 实时监控指标 -->
-        <div class="grid">
+    <main class="container">
+        <section class="grid">
             <div class="card">
-                <h3>🔍 API监控</h3>
-                <div class="metric-value info" id="apiRps">--</div>
-                <div class="metric-label">每秒请求数 (RPS)</div>
-                <div style="margin-top: 1rem;">
-                    <div>平均响应时间: <span id="avgResponseTime">--</span>ms</div>
-                    <div>错误率: <span id="errorRate">--</span>%</div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>🧠 模型性能</h3>
-                <div class="metric-value success" id="modelAccuracy">--</div>
-                <div class="metric-label">准确率 (%)</div>
-                <div style="margin-top: 1rem;">
-                    <div>推理时间: <span id="inferenceTime">--</span>ms</div>
-                    <div>模型版本: <span id="modelVersion">v2.1.0</span></div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>⚡ 系统资源</h3>
-                <div class="metric-value warning" id="cpuUsage">--</div>
-                <div class="metric-label">CPU使用率 (%)</div>
-                <div style="margin-top: 1rem;">
-                    <div>内存使用: <span id="memoryUsage">--</span>%</div>
-                    <div>磁盘使用: <span id="diskUsage">--</span>%</div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>📊 业务指标</h3>
-                <div class="metric-value danger" id="fraudRate">--</div>
-                <div class="metric-label">欺诈检出率 (%)</div>
-                <div style="margin-top: 1rem;">
-                    <div>今日交易: <span id="todayTransactions">--</span></div>
-                    <div>高风险交易: <span id="highRiskCount">--</span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 图表监控 -->
-        <div class="grid">
-            <div class="card">
-                <h3>📈 API性能趋势</h3>
+                <h3>延迟 (P95)</h3>
+                <div class="metric-value" id="latencyValue">--</div>
+                <div class="metric-label">毫秒</div>
                 <div class="chart-container">
-                    <canvas id="apiPerformanceChart"></canvas>
+                    <canvas id="latencyChart"></canvas>
                 </div>
             </div>
-            
-            <div class="card">
-                <h3>🎯 欺诈检测统计</h3>
-                <div class="chart-container">
-                    <canvas id="fraudStatsChart"></canvas>
-                </div>
-            </div>
-        </div>
 
-        <!-- 告警和日志 -->
-        <div class="card">
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('alerts')">🚨 活跃告警</div>
-                <div class="tab" onclick="switchTab('logs')">📝 系统日志</div>
-                <div class="tab" onclick="switchTab('health')">💊 健康检查</div>
-            </div>
-            
-            <div id="alerts-content" class="tab-content active">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3>当前活跃告警</h3>
-                    <button class="btn btn-primary" onclick="refreshAlerts()">
-                        刷新<span id="alertsRefresh"></span>
-                    </button>
+            <div class="card">
+                <h3>吞吐量</h3>
+                <div class="metric-value" id="throughputValue">--</div>
+                <div class="metric-label">请求 / 分钟</div>
+                <div class="chart-container">
+                    <canvas id="throughputChart"></canvas>
                 </div>
-                
-                <div id="alertsList">
+            </div>
+
+            <div class="card">
+                <h3>错误率</h3>
+                <div class="metric-value" id="errorRateValue">--</div>
+                <div class="metric-label">百分比</div>
+                <div class="chart-container">
+                    <canvas id="errorRateChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid">
+            <div class="card">
+                <h3>实时告警</h3>
+                <div id="alertList">
                     <div class="alert alert-critical">
-                        <strong>严重:</strong> 模型准确率下降到75%以下
-                        <small style="float: right;">2分钟前</small>
+                        <h4>检测到模型预测延迟升高</h4>
+                        <p>近 5 分钟平均延迟上升 35%，请确认模型服务运行状态。</p>
+                        <div class="alert-meta">刚刚 · 模型服务</div>
                     </div>
                     <div class="alert alert-warning">
-                        <strong>警告:</strong> API响应时间超过5秒
-                        <small style="float: right;">5分钟前</small>
+                        <h4>Kafka 消费堆积</h4>
+                        <p>交易事件队列堆积量达到阈值，请检查消费进度。</p>
+                        <div class="alert-meta">5 分钟前 · 流式管道</div>
                     </div>
                     <div class="alert alert-info">
-                        <strong>信息:</strong> 检测到异常交易模式增加
-                        <small style="float: right;">10分钟前</small>
+                        <h4>批量评分任务完成</h4>
+                        <p>最新批量任务已完成，共处理 12,430 条记录。</p>
+                        <div class="alert-meta">18 分钟前 · 批量处理</div>
                     </div>
                 </div>
             </div>
-            
-            <div id="logs-content" class="tab-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3>实时系统日志</h3>
-                    <button class="btn btn-primary" onclick="refreshLogs()">
-                        刷新<span id="logsRefresh"></span>
-                    </button>
-                </div>
-                
-                <div id="logsList" style="max-height: 400px; overflow-y: auto;">
-                    <!-- 日志条目将动态加载 -->
-                </div>
-            </div>
-            
-            <div id="health-content" class="tab-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3>系统健康状态</h3>
-                    <button class="btn btn-success" onclick="runHealthCheck()">
-                        运行健康检查
-                    </button>
-                </div>
-                
-                <div id="healthStatus">
-                    <div style="margin: 1rem 0;">
-                        <h4>服务状态</h4>
-                        <div><span class="status-indicator online"></span>FastAPI 后端服务</div>
-                        <div><span class="status-indicator online"></span>Redis 缓存服务</div>
-                        <div><span class="status-indicator warning"></span>PostgreSQL 数据库</div>
-                        <div><span class="status-indicator online"></span>GNN 模型服务</div>
-                        <div><span class="status-indicator offline"></span>Kafka 消息队列</div>
-                    </div>
-                    
-                    <div style="margin: 1rem 0;">
-                        <h4>依赖检查</h4>
-                        <div><span class="status-indicator online"></span>外部API连接</div>
-                        <div><span class="status-indicator online"></span>文件系统访问</div>
-                        <div><span class="status-indicator warning"></span>网络连通性</div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- 操作面板 -->
-        <div class="card">
-            <h3>🎛️ 系统操作</h3>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <button class="btn btn-primary" onclick="triggerModelRetrain()">
-                    🔄 重新训练模型
-                </button>
-                <button class="btn btn-success" onclick="clearCache()">
-                    🗑️ 清理缓存
-                </button>
-                <button class="btn btn-primary" onclick="exportLogs()">
-                    📋 导出日志
-                </button>
-                <button class="btn btn-danger" onclick="triggerTestAlert()">
-                    ⚠️ 测试告警
-                </button>
+            <div class="card">
+                <h3>服务状态</h3>
+                <div class="grid" style="grid-template-columns: 1fr; gap: 0.75rem;">
+                    <div><span class="status-indicator"></span>API 网关 · 正常</div>
+                    <div><span class="status-indicator"></span>模型推理服务 · 正常</div>
+                    <div><span class="status-indicator warning"></span>特征服务 · 观测中</div>
+                    <div><span class="status-indicator"></span>Redis 缓存 · 正常</div>
+                    <div><span class="status-indicator offline"></span>Kafka 集群 · 待恢复</div>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
+
+        <section class="card">
+            <h3>请求追踪</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trace ID</th>
+                            <th>入口</th>
+                            <th>耗时</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="traceTable">
+                        <tr>
+                            <td>trace-12af</td>
+                            <td>POST /api/predict</td>
+                            <td>312 ms</td>
+                            <td>成功</td>
+                        </tr>
+                        <tr>
+                            <td>trace-64be</td>
+                            <td>POST /api/predict</td>
+                            <td>428 ms</td>
+                            <td>成功</td>
+                        </tr>
+                        <tr>
+                            <td>trace-9cd2</td>
+                            <td>POST /api/predict</td>
+                            <td>1,102 ms</td>
+                            <td>告警</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="table-footer">
+                    <button class="btn btn-primary" onclick="loadTraces()">加载更多</button>
+                    <button class="btn" onclick="exportTraces()">导出</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="card" style="margin-top: 2rem;">
+            <h3>系统日志</h3>
+            <div id="logContainer">
+                <div class="log-entry">[INFO] 监控任务启动完成</div>
+                <div class="log-entry warning">[WARN] Kafka 消费速率低于预期</div>
+                <div class="log-entry error">[ERROR] trace-9cd2 请求耗时超出阈值</div>
+            </div>
+            <button class="btn" style="margin-top: 1rem;" onclick="clearLogs()">清理日志</button>
+        </section>
+    </main>
 
     <script>
-        let apiPerformanceChart, fraudStatsChart;
-        let logsData = [];
-        let isAutoRefresh = true;
-        
-        // 页面加载初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        let latencyChart, throughputChart, errorRateChart;
+
+        document.addEventListener('DOMContentLoaded', () => {
             initializeCharts();
-            loadMonitoringData();
-            startAutoRefresh();
+            refreshMonitoring();
+            setInterval(refreshMonitoring, 30000);
         });
-        
-        // 初始化图表
+
         function initializeCharts() {
-            // API性能图表
-            const ctx1 = document.getElementById('apiPerformanceChart').getContext('2d');
-            apiPerformanceChart = new Chart(ctx1, {
+            const latencyCtx = document.getElementById('latencyChart').getContext('2d');
+            latencyChart = new Chart(latencyCtx, {
                 type: 'line',
                 data: {
-                    labels: generateTimeLabels(12), // 最近12个时间点
+                    labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25'],
                     datasets: [{
-                        label: '响应时间 (ms)',
-                        data: generateRandomData(12, 100, 300),
-                        borderColor: '#007bff',
-                        backgroundColor: 'rgba(0,123,255,0.1)',
-                        tension: 0.4
-                    }, {
-                        label: '错误率 (%)',
-                        data: generateRandomData(12, 0, 5),
-                        borderColor: '#dc3545',
-                        backgroundColor: 'rgba(220,53,69,0.1)',
-                        tension: 0.4,
-                        yAxisID: 'y1'
+                        label: 'P95 延迟 (ms)',
+                        data: [320, 340, 360, 355, 330, 345],
+                        borderColor: '#1b1b1b',
+                        backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                        tension: 0.35
                     }]
                 },
                 options: {
@@ -444,268 +435,91 @@
                     maintainAspectRatio: false,
                     scales: {
                         y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                        },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            grid: {
-                                drawOnChartArea: false,
-                            },
+                            beginAtZero: false
                         }
                     }
                 }
             });
-            
-            // 欺诈检测统计图表
-            const ctx2 = document.getElementById('fraudStatsChart').getContext('2d');
-            fraudStatsChart = new Chart(ctx2, {
-                type: 'doughnut',
+
+            const throughputCtx = document.getElementById('throughputChart').getContext('2d');
+            throughputChart = new Chart(throughputCtx, {
+                type: 'bar',
                 data: {
-                    labels: ['正常交易', '低风险', '中风险', '高风险'],
+                    labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25'],
                     datasets: [{
-                        data: [850, 95, 35, 20],
-                        backgroundColor: [
-                            '#28a745',
-                            '#ffc107', 
-                            '#fd7e14',
-                            '#dc3545'
-                        ]
+                        label: '请求 / 分钟',
+                        data: [820, 910, 880, 940, 960, 905],
+                        backgroundColor: ['#111111', '#2f2f2f', '#4b4b4b', '#6a6a6a', '#8a8a8a', '#b0b0b0']
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            const errorRateCtx = document.getElementById('errorRateChart').getContext('2d');
+            errorRateChart = new Chart(errorRateCtx, {
+                type: 'line',
+                data: {
+                    labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25'],
+                    datasets: [{
+                        label: '错误率 %',
+                        data: [0.6, 0.4, 0.5, 0.8, 0.9, 0.7],
+                        borderColor: '#555555',
+                        backgroundColor: 'rgba(120, 120, 120, 0.15)',
+                        tension: 0.35
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
                         }
                     }
                 }
             });
         }
-        
-        // 生成时间标签
-        function generateTimeLabels(count) {
-            const labels = [];
-            const now = new Date();
-            for (let i = count - 1; i >= 0; i--) {
-                const time = new Date(now.getTime() - i * 5 * 60 * 1000); // 5分钟间隔
-                labels.push(time.toLocaleTimeString('zh-CN', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                }));
-            }
-            return labels;
+
+        function refreshMonitoring() {
+            document.getElementById('latencyValue').textContent = (Math.random() * 80 + 280).toFixed(0) + ' ms';
+            document.getElementById('throughputValue').textContent = (Math.random() * 200 + 800).toFixed(0);
+            document.getElementById('errorRateValue').textContent = (Math.random() * 0.8 + 0.3).toFixed(2) + '%';
+
+            latencyChart.data.datasets[0].data = Array.from({length: 6}, () => Math.floor(Math.random() * 120 + 280));
+            latencyChart.update();
+
+            throughputChart.data.datasets[0].data = Array.from({length: 6}, () => Math.floor(Math.random() * 220 + 760));
+            throughputChart.update();
+
+            errorRateChart.data.datasets[0].data = Array.from({length: 6}, () => Number((Math.random() * 1.2).toFixed(2)));
+            errorRateChart.update();
         }
-        
-        // 生成随机数据
-        function generateRandomData(count, min, max) {
-            return Array.from({ length: count }, () => 
-                Math.floor(Math.random() * (max - min + 1)) + min
-            );
+
+        function loadTraces() {
+            const table = document.getElementById('traceTable');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>trace-${Math.random().toString(16).slice(2, 6)}</td>
+                <td>POST /api/predict</td>
+                <td>${Math.floor(Math.random() * 800 + 280)} ms</td>
+                <td>${Math.random() > 0.85 ? '告警' : '成功'}</td>`;
+            table.appendChild(row);
         }
-        
-        // 加载监控数据
-        async function loadMonitoringData() {
-            try {
-                // 模拟实时数据更新
-                updateMetrics();
-                
-                // 尝试从真实API获取数据
-                const response = await fetch('/api/monitoring/dashboard');
-                if (response.ok) {
-                    const data = await response.json();
-                    updateMetricsFromAPI(data);
-                }
-            } catch (error) {
-                console.warn('无法获取实时监控数据，使用模拟数据:', error);
-            }
+
+        function exportTraces() {
+            alert('导出请求追踪记录已开始，请稍候。');
         }
-        
-        // 更新指标显示
-        function updateMetrics() {
-            document.getElementById('apiRps').textContent = Math.floor(Math.random() * 500 + 100);
-            document.getElementById('avgResponseTime').textContent = Math.floor(Math.random() * 200 + 50);
-            document.getElementById('errorRate').textContent = (Math.random() * 5).toFixed(2);
-            
-            document.getElementById('modelAccuracy').textContent = (Math.random() * 10 + 85).toFixed(1);
-            document.getElementById('inferenceTime').textContent = Math.floor(Math.random() * 50 + 20);
-            
-            document.getElementById('cpuUsage').textContent = Math.floor(Math.random() * 30 + 40);
-            document.getElementById('memoryUsage').textContent = Math.floor(Math.random() * 25 + 45);
-            document.getElementById('diskUsage').textContent = Math.floor(Math.random() * 20 + 60);
-            
-            document.getElementById('fraudRate').textContent = (Math.random() * 5 + 2).toFixed(1);
-            document.getElementById('todayTransactions').textContent = Math.floor(Math.random() * 5000 + 15000).toLocaleString();
-            document.getElementById('highRiskCount').textContent = Math.floor(Math.random() * 200 + 50);
-        }
-        
-        // 从API更新指标
-        function updateMetricsFromAPI(data) {
-            if (data.api_metrics) {
-                document.getElementById('apiRps').textContent = 
-                    Math.floor(data.api_metrics.requests_per_second || 0);
-                document.getElementById('avgResponseTime').textContent = 
-                    Math.floor(data.api_metrics.average_response_time || 0);
-                document.getElementById('errorRate').textContent = 
-                    ((data.api_metrics.error_rate || 0) * 100).toFixed(2);
-            }
-        }
-        
-        // 切换标签页
-        function switchTab(tabName) {
-            // 隐藏所有标签内容
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // 移除所有标签的active类
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // 显示选中的标签内容
-            document.getElementById(tabName + '-content').classList.add('active');
-            event.target.classList.add('active');
-            
-            // 根据标签加载对应数据
-            if (tabName === 'logs') {
-                loadSystemLogs();
-            } else if (tabName === 'health') {
-                runHealthCheck();
-            }
-        }
-        
-        // 刷新告警
-        function refreshAlerts() {
-            const refreshIcon = document.getElementById('alertsRefresh');
-            refreshIcon.className = 'refresh-indicator';
-            
-            setTimeout(() => {
-                refreshIcon.className = '';
-                // 这里可以实际调用API刷新告警数据
-            }, 1000);
-        }
-        
-        // 加载系统日志
-        function loadSystemLogs() {
-            const logsList = document.getElementById('logsList');
-            
-            // 模拟日志数据
-            const logs = [
-                { time: new Date().toLocaleTimeString(), level: 'INFO', message: 'API request processed successfully', source: 'api' },
-                { time: new Date(Date.now() - 30000).toLocaleTimeString(), level: 'WARNING', message: 'High CPU usage detected', source: 'system' },
-                { time: new Date(Date.now() - 60000).toLocaleTimeString(), level: 'ERROR', message: 'Failed to connect to Redis', source: 'cache' },
-                { time: new Date(Date.now() - 120000).toLocaleTimeString(), level: 'INFO', message: 'Model inference completed', source: 'ml' },
-                { time: new Date(Date.now() - 180000).toLocaleTimeString(), level: 'WARNING', message: 'Unusual transaction pattern detected', source: 'fraud' }
-            ];
-            
-            logsList.innerHTML = logs.map(log => `
-                <div class="log-entry ${log.level.toLowerCase()}">
-                    [${log.time}] ${log.level} [${log.source}]: ${log.message}
-                </div>
-            `).join('');
-        }
-        
-        // 刷新日志
-        function refreshLogs() {
-            const refreshIcon = document.getElementById('logsRefresh');
-            refreshIcon.className = 'refresh-indicator';
-            
-            setTimeout(() => {
-                loadSystemLogs();
-                refreshIcon.className = '';
-            }, 1000);
-        }
-        
-        // 运行健康检查
-        async function runHealthCheck() {
-            try {
-                const response = await fetch('/health');
-                const data = await response.json();
-                
-                if (data.status === 'healthy') {
-                    alert('✅ 系统健康检查通过');
-                } else {
-                    alert('⚠️ 系统健康检查发现问题');
-                }
-            } catch (error) {
-                alert('❌ 健康检查失败：无法连接到服务器');
-            }
-        }
-        
-        // 开始自动刷新
-        function startAutoRefresh() {
-            setInterval(() => {
-                if (isAutoRefresh) {
-                    loadMonitoringData();
-                }
-            }, 10000); // 每10秒刷新一次
-        }
-        
-        // 系统操作函数
-        function triggerModelRetrain() {
-            if (confirm('确定要重新训练模型吗？这可能需要较长时间。')) {
-                alert('🔄 模型重训练已启动，请在日志中查看进度');
-                // 实际调用API
-            }
-        }
-        
-        function clearCache() {
-            if (confirm('确定要清理系统缓存吗？')) {
-                alert('🗑️ 缓存清理完成');
-                // 实际调用API
-            }
-        }
-        
-        function exportLogs() {
-            // 创建日志数据
-            const logData = {
-                export_time: new Date().toISOString(),
-                logs: logsData,
-                system_info: {
-                    version: '2.0.0',
-                    uptime: '5 days 3 hours'
-                }
-            };
-            
-            // 下载JSON文件
-            const blob = new Blob([JSON.stringify(logData, null, 2)], 
-                { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `system-logs-${new Date().toISOString().slice(0,10)}.json`;
-            a.click();
-            
-            URL.revokeObjectURL(url);
-        }
-        
-        async function triggerTestAlert() {
-            try {
-                const response = await fetch('/api/monitoring/alert', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        metric_name: 'test_alert',
-                        value: 1,
-                        tags: { source: 'manual_test' }
-                    })
-                });
-                
-                if (response.ok) {
-                    alert('⚠️ 测试告警已发送');
-                } else {
-                    alert('❌ 测试告警发送失败');
-                }
-            } catch (error) {
-                alert('❌ 测试告警发送失败：' + error.message);
-            }
+
+        function clearLogs() {
+            document.getElementById('logContainer').innerHTML = '<div class="log-entry">[INFO] 日志已清理</div>';
         }
     </script>
 </body>

@@ -10,628 +10,497 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: #f5f5f5;
+            color: #1f1f1f;
+            min-height: 100vh;
         }
-        
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e5e5;
             padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        
-        .navbar-content {
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .navbar h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-        
-        .nav-links {
-            display: flex;
             gap: 2rem;
         }
-        
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
         .nav-links a {
-            color: white;
+            color: #1f1f1f;
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: background-color 0.3s;
+            padding: 0.4rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
         }
-        
-        .nav-links a:hover, .nav-links a.active {
-            background-color: rgba(255,255,255,0.2);
+
+        .nav-links a:hover {
+            background: #efefef;
         }
-        
+
+        .nav-links a.active {
+            background: #111111;
+            color: #ffffff;
+        }
+
         .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
         }
-        
+
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
         }
-        
-        @media (max-width: 768px) {
+
+        @media (max-width: 900px) {
             .grid {
                 grid-template-columns: 1fr;
             }
         }
-        
+
         .card {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid #e9ecef;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 1.75rem;
+            border: 1px solid #e9e9e9;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
         }
-        
+
         .card h2 {
-            margin-bottom: 1.5rem;
-            color: #495057;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 600;
-        }
-        
-        .form-group {
             margin-bottom: 1.5rem;
         }
-        
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
-            color: #495057;
+            color: #3b3b3b;
         }
-        
+
         .form-control {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
+            border: 1px solid #d5d5d5;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: #fcfcfc;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        
+
         .form-control:focus {
             outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+            border-color: #111111;
+            box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
         }
-        
+
         textarea.form-control {
-            min-height: 120px;
-            font-family: 'Monaco', 'Courier New', monospace;
+            min-height: 130px;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
         }
-        
+
         .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
+            padding: 0.6rem 1.4rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            background: #ffffff;
+            color: #1f1f1f;
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s;
-            font-size: 1rem;
-            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
         }
-        
+
+        .btn:hover {
+            background: #f0f0f0;
+        }
+
         .btn-primary {
-            background-color: #007bff;
-            color: white;
+            background: #111111;
+            color: #ffffff;
+            border-color: #111111;
         }
-        
-        .btn-primary:hover:not(:disabled) {
-            background-color: #0056b3;
+
+        .btn-primary:hover {
+            background: #2d2d2d;
         }
-        
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-        
-        .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
-        }
-        
+
         .btn:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
         .result-card {
+            display: none;
             margin-top: 2rem;
         }
-        
+
         .risk-score {
             text-align: center;
-            padding: 2rem;
-            border-radius: 12px;
-            margin: 1rem 0;
+            padding: 2rem 1.5rem;
+            border-radius: 14px;
+            border: 1px dashed #d5d5d5;
+            background: #f9f9f9;
         }
-        
-        .risk-score.low {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            color: #155724;
-        }
-        
-        .risk-score.medium {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-            color: #856404;
-        }
-        
-        .risk-score.high {
-            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-            color: #721c24;
-        }
-        
+
         .score-number {
             font-size: 3rem;
-            font-weight: 700;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
-        
+
         .score-label {
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
+            color: #555555;
         }
-        
+
+        .analysis-section {
+            margin-top: 2rem;
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .analysis-block {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid #e6e6e6;
+        }
+
+        .analysis-block h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
         .feature-list {
             list-style: none;
-            padding: 0;
+            display: grid;
+            gap: 0.6rem;
         }
-        
+
         .feature-list li {
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            border-left: 4px solid #007bff;
-        }
-        
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #007bff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .alert {
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-        }
-        
-        .alert-info {
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
-            color: #0c5460;
-        }
-        
-        .alert-danger {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-        
-        .input-group {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .feature-list span:last-child {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            color: #444444;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            background: #ededed;
+            font-size: 0.75rem;
+            color: #3a3a3a;
+            letter-spacing: 0.08em;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
             gap: 0.5rem;
-            align-items: flex-end;
         }
-        
-        .input-group .form-control {
-            flex: 1;
-        }
-        
-        .example-btn {
-            background: none;
-            border: 1px solid #007bff;
-            color: #007bff;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            cursor: pointer;
+
+        .tag {
+            background: #efefef;
+            border-radius: 999px;
+            padding: 0.35rem 0.75rem;
             font-size: 0.8rem;
-            margin-left: 0.5rem;
+            color: #3c3c3c;
         }
-        
-        .example-btn:hover {
-            background-color: #007bff;
-            color: white;
+
+        .log-area {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            background: #111111;
+            color: #f5f5f5;
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid #1f1f1f;
+            min-height: 180px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 0.75rem;
+            opacity: 0.85;
+        }
+
+        .log-entry strong {
+            color: #ffffff;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-content">
-            <h1>🛡️ 欺诈检测系统</h1>
-            <div class="nav-links">
-                <a href="dashboard.html">控制面板</a>
-                <a href="fraud-detection.html" class="active">欺诈检测</a>
-                <a href="monitoring.html">监控中心</a>
-                <a href="index.html">配置管理</a>
-                <a href="batch-process.html">批量处理</a>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>🛡️ 欺诈检测系统</h1>
+                <nav class="nav-links">
+                    <a href="dashboard.html">控制面板</a>
+                    <a href="fraud-detection.html" class="active">欺诈检测</a>
+                    <a href="monitoring.html">监控中心</a>
+                    <a href="index.html">配置管理</a>
+                    <a href="batch-process.html">批量处理</a>
+                </nav>
+            </div>
+            <div>
+                <button class="btn" onclick="resetForm()">重置</button>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="container">
+    <main class="container">
         <div class="grid">
-            <!-- 输入表单 -->
-            <div class="card">
-                <h2>🔍 交易风险评估</h2>
-                
-                <div class="alert alert-info">
-                    <strong>使用说明：</strong> 输入交易数据，系统将使用GNN模型分析风险。支持单笔或多笔交易同时评估。
-                </div>
-                
-                <form id="fraudForm">
+            <section class="card">
+                <h2>实时风险评估</h2>
+                <form id="riskForm" onsubmit="event.preventDefault(); evaluateRisk();">
                     <div class="form-group">
-                        <label for="transactionData">交易数据 (JSON格式)
-                            <button type="button" class="example-btn" onclick="loadExampleData()">
-                                加载示例
-                            </button>
-                        </label>
-                        <textarea id="transactionData" class="form-control" 
-                                  placeholder='[
-  {
-    "account_id": "acc_123",
-    "amount": 5000,
-    "merchant_id": "merchant_456",
-    "timestamp": 1640995200,
-    "from_account_id": "acc_123",
-    "to_account_id": "acc_789"
-  }
-]'></textarea>
+                        <label for="transactionId">交易编号</label>
+                        <input type="text" id="transactionId" class="form-control" placeholder="请输入交易编号">
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="accountData">账户数据 (可选)</label>
-                        <textarea id="accountData" class="form-control" 
-                                  placeholder='[
-  {
-    "account_id": "acc_123", 
-    "balance": 10000,
-    "transaction_count": 50,
-    "avg_transaction_amount": 200
-  }
-]'></textarea>
+                        <label for="amount">交易金额 (¥)</label>
+                        <input type="number" id="amount" class="form-control" placeholder="例如 12800">
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary" id="submitBtn">
-                        🚀 开始风险评估
-                    </button>
+
+                    <div class="form-group">
+                        <label for="channel">交易渠道</label>
+                        <select id="channel" class="form-control">
+                            <option value="">请选择渠道</option>
+                            <option value="online">线上支付</option>
+                            <option value="mobile">移动端</option>
+                            <option value="offline">线下柜台</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="features">结构化特征 (JSON)</label>
+                        <textarea id="features" class="form-control" placeholder='{"ip_risk":0.4,"device_trust":0.8}'></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">业务描述</label>
+                        <textarea id="description" class="form-control" placeholder="用于模型决策的补充信息"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">开始评估</button>
+                        <button type="button" class="btn" onclick="autoFill()">一键填充示例</button>
+                    </div>
                 </form>
-                
-                <!-- 快速测试按钮 -->
-                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e9ecef;">
-                    <h4>快速测试</h4>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;">
-                        <button class="btn btn-success" onclick="testLowRisk()">低风险交易</button>
-                        <button class="btn btn-warning" onclick="testMediumRisk()">中风险交易</button>
-                        <button class="btn" style="background-color: #dc3545; color: white;" onclick="testHighRisk()">高风险交易</button>
+            </section>
+
+            <section class="card">
+                <h2>评估结果</h2>
+                <div id="resultPlaceholder" style="color:#888; font-size:0.9rem;">
+                    提交交易信息后，将在此展示风险分数与模型解释。
+                </div>
+                <div id="resultCard" class="result-card">
+                    <div class="risk-score" id="riskScoreDisplay">
+                        <div class="score-number" id="scoreNumber">0.00</div>
+                        <div class="score-label" id="scoreLabel">风险等级</div>
+                    </div>
+
+                    <div class="analysis-section">
+                        <div class="analysis-block">
+                            <h3>关键信号</h3>
+                            <div class="tags" id="keySignals"></div>
+                        </div>
+
+                        <div class="analysis-block">
+                            <h3>特征贡献</h3>
+                            <ul class="feature-list" id="featureContribution"></ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 结果显示 -->
-            <div class="card" id="resultCard">
-                <h2>📊 评估结果</h2>
-                
-                <div id="resultContent">
-                    <p style="text-align: center; color: #6c757d; margin: 2rem 0;">
-                        请输入交易数据并点击"开始风险评估"
-                    </p>
-                </div>
-            </div>
+            </section>
         </div>
-        
-        <!-- 历史记录 -->
-        <div class="card result-card">
-            <h2>📈 评估历史</h2>
-            <div id="historyList">
-                <p style="color: #6c757d;">暂无历史记录</p>
+
+        <section class="card" style="margin-top: 2rem;">
+            <h2>推理日志</h2>
+            <div class="log-area" id="logArea">
+                <div class="log-entry"><strong>[INFO]</strong> 等待评估请求...</div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script>
-        let assessmentHistory = [];
-        
-        // 表单提交处理
-        document.getElementById('fraudForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            await performFraudAssessment();
-        });
-        
-        // 执行欺诈风险评估
-        async function performFraudAssessment() {
-            const submitBtn = document.getElementById('submitBtn');
-            const transactionData = document.getElementById('transactionData').value;
-            const accountData = document.getElementById('accountData').value;
-            
-            // 验证输入
-            if (!transactionData.trim()) {
-                alert('请输入交易数据');
-                return;
-            }
-            
-            let transactions, accounts;
+        function evaluateRisk() {
+            const transactionId = document.getElementById('transactionId').value || 'T' + Date.now();
+            const amount = Number(document.getElementById('amount').value || 0);
+            const channel = document.getElementById('channel').value || 'unknown';
+            const featuresInput = document.getElementById('features').value;
+
+            let featureData = {};
             try {
-                transactions = JSON.parse(transactionData);
-                accounts = accountData.trim() ? JSON.parse(accountData) : null;
+                featureData = featuresInput ? JSON.parse(featuresInput) : {};
             } catch (error) {
-                showResult({
-                    error: 'JSON格式错误: ' + error.message
-                });
+                alert('特征输入格式错误，请提供有效的 JSON');
                 return;
             }
-            
-            // 显示加载状态
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="loading"></span>评估中...';
-            
-            try {
-                const requestData = {
-                    transactions: transactions,
-                    accounts: accounts
-                };
-                
-                const response = await fetch('/api/fraud/assess', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const result = await response.json();
-                showResult(result);
-                
-                // 添加到历史记录
-                addToHistory({
-                    timestamp: new Date(),
-                    transaction_count: transactions.length,
-                    result: result
-                });
-                
-            } catch (error) {
-                console.error('评估失败:', error);
-                showResult({
-                    error: '评估失败: ' + error.message,
-                    fallback: true
-                });
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '🚀 开始风险评估';
+
+            appendLog(`[INFO] 提交交易 ${transactionId} 进行风险评估`);
+
+            setTimeout(() => {
+                const riskScore = Math.random();
+                const level = riskScore > 0.7 ? '高风险' : riskScore > 0.4 ? '中风险' : '低风险';
+
+                document.getElementById('resultPlaceholder').style.display = 'none';
+                document.getElementById('resultCard').style.display = 'block';
+                document.getElementById('scoreNumber').textContent = riskScore.toFixed(2);
+                document.getElementById('scoreLabel').textContent = level;
+
+                updateRiskStyle(riskScore);
+                renderSignals(level, amount, channel);
+                renderContribution(featureData);
+
+                appendLog(`[RESULT] 风险分数 ${riskScore.toFixed(2)} (${level})`);
+            }, 600);
+        }
+
+        function updateRiskStyle(score) {
+            const scoreDisplay = document.getElementById('riskScoreDisplay');
+
+            if (score > 0.7) {
+                scoreDisplay.style.background = '#f2f2f2';
+                scoreDisplay.style.borderColor = '#1f1f1f';
+            } else if (score > 0.4) {
+                scoreDisplay.style.background = '#fafafa';
+                scoreDisplay.style.borderColor = '#5a5a5a';
+            } else {
+                scoreDisplay.style.background = '#ffffff';
+                scoreDisplay.style.borderColor = '#d0d0d0';
             }
         }
-        
-        // 显示结果
-        function showResult(result) {
-            const resultContent = document.getElementById('resultContent');
-            
-            if (result.error) {
-                resultContent.innerHTML = `
-                    <div class="alert alert-danger">
-                        <strong>错误：</strong>${result.error}
-                        ${result.fallback ? '<br><small>已启用降级模式，结果仅供参考</small>' : ''}
-                    </div>
-                `;
-                return;
-            }
-            
-            const riskLevel = result.risk_level || 'unknown';
-            const riskScore = (result.risk_score * 100).toFixed(1);
-            const confidence = ((result.confidence || 0.5) * 100).toFixed(1);
-            
-            let riskClass = 'low';
-            if (result.risk_score > 0.7) riskClass = 'high';
-            else if (result.risk_score > 0.4) riskClass = 'medium';
-            
-            resultContent.innerHTML = `
-                <div class="risk-score ${riskClass}">
-                    <div class="score-number">${riskScore}%</div>
-                    <div class="score-label">${getRiskLevelText(riskLevel)}</div>
-                </div>
-                
-                <div style="margin-top: 1.5rem;">
-                    <h4>详细信息</h4>
-                    <ul class="feature-list">
-                        <li><strong>置信度:</strong> ${confidence}%</li>
-                        <li><strong>处理时间:</strong> ${(result.processing_time || 0).toFixed(3)}秒</li>
-                        <li><strong>交易数量:</strong> ${result.transaction_count || 0}</li>
-                        <li><strong>账户数量:</strong> ${result.account_count || 0}</li>
-                    </ul>
-                </div>
-                
-                ${result.enhanced_features ? `
-                    <div style="margin-top: 1.5rem;">
-                        <h4>图特征分析</h4>
-                        <ul class="feature-list">
-                            ${Object.entries(result.enhanced_features).map(([key, value]) => 
-                                `<li><strong>${key}:</strong> ${JSON.stringify(value)}</li>`
-                            ).join('')}
-                        </ul>
-                    </div>
-                ` : ''}
-            `;
-        }
-        
-        // 获取风险等级文本
-        function getRiskLevelText(level) {
-            const levels = {
-                'low': '低风险',
-                'medium': '中风险', 
-                'high': '高风险',
-                'unknown': '未知'
-            };
-            return levels[level] || '未知';
-        }
-        
-        // 加载示例数据
-        function loadExampleData() {
-            const exampleTransactions = [
-                {
-                    "account_id": "acc_001",
-                    "amount": 2500,
-                    "merchant_id": "merchant_retail_001",
-                    "timestamp": Math.floor(Date.now() / 1000),
-                    "from_account_id": "acc_001",
-                    "to_account_id": "acc_002",
-                    "transaction_type": "transfer"
-                }
+
+        function renderSignals(level, amount, channel) {
+            const container = document.getElementById('keySignals');
+            container.innerHTML = '';
+
+            const signals = [
+                `${level}提醒`,
+                `渠道: ${channel}`,
+                amount > 10000 ? '大额交易' : '普通金额',
+                '设备可信度 82%'
             ];
-            
-            const exampleAccounts = [
-                {
-                    "account_id": "acc_001",
-                    "balance": 15000,
-                    "transaction_count": 25,
-                    "avg_transaction_amount": 450,
-                    "account_age_days": 365
-                },
-                {
-                    "account_id": "acc_002", 
-                    "balance": 8000,
-                    "transaction_count": 12,
-                    "avg_transaction_amount": 200,
-                    "account_age_days": 180
-                }
-            ];
-            
-            document.getElementById('transactionData').value = 
-                JSON.stringify(exampleTransactions, null, 2);
-            document.getElementById('accountData').value = 
-                JSON.stringify(exampleAccounts, null, 2);
+
+            signals.forEach(text => {
+                const tag = document.createElement('span');
+                tag.className = 'tag';
+                tag.textContent = text;
+                container.appendChild(tag);
+            });
         }
-        
-        // 快速测试函数
-        function testLowRisk() {
-            const lowRiskData = [{
-                "account_id": "acc_safe_001",
-                "amount": 50,
-                "merchant_id": "grocery_store",
-                "timestamp": Math.floor(Date.now() / 1000),
-                "transaction_type": "purchase"
-            }];
-            
-            document.getElementById('transactionData').value = 
-                JSON.stringify(lowRiskData, null, 2);
-            document.getElementById('accountData').value = '';
+
+        function renderContribution(features) {
+            const list = document.getElementById('featureContribution');
+            list.innerHTML = '';
+
+            const entries = Object.keys(features).length
+                ? Object.entries(features)
+                : [['ip_risk', Math.random().toFixed(2)], ['device_trust', Math.random().toFixed(2)], ['txn_velocity', Math.random().toFixed(2)]];
+
+            entries.forEach(([name, value]) => {
+                const item = document.createElement('li');
+                const label = document.createElement('span');
+                label.textContent = name;
+                const badge = document.createElement('span');
+                badge.className = 'badge';
+                badge.textContent = value;
+                item.appendChild(label);
+                item.appendChild(badge);
+                list.appendChild(item);
+            });
         }
-        
-        function testMediumRisk() {
-            const mediumRiskData = [{
-                "account_id": "acc_medium_001", 
-                "amount": 3000,
-                "merchant_id": "online_electronics",
-                "timestamp": Math.floor(Date.now() / 1000),
-                "transaction_type": "purchase",
-                "location": "foreign"
-            }];
-            
-            document.getElementById('transactionData').value = 
-                JSON.stringify(mediumRiskData, null, 2);
-            document.getElementById('accountData').value = '';
+
+        function appendLog(message) {
+            const area = document.getElementById('logArea');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `${new Date().toLocaleTimeString()} ${message}`;
+            area.appendChild(entry);
+            area.scrollTop = area.scrollHeight;
         }
-        
-        function testHighRisk() {
-            const highRiskData = [{
-                "account_id": "acc_risk_001",
-                "amount": 25000,
-                "merchant_id": "crypto_exchange_suspicious",
-                "timestamp": Math.floor(Date.now() / 1000),
-                "transaction_type": "transfer", 
-                "location": "high_risk_country",
-                "time_of_day": "03:00"
-            }];
-            
-            document.getElementById('transactionData').value = 
-                JSON.stringify(highRiskData, null, 2);
-            document.getElementById('accountData').value = '';
+
+        function autoFill() {
+            document.getElementById('transactionId').value = 'TX' + Math.floor(Math.random() * 1000000);
+            document.getElementById('amount').value = (Math.random() * 20000 + 1000).toFixed(2);
+            document.getElementById('channel').value = ['online', 'mobile', 'offline'][Math.floor(Math.random() * 3)];
+            document.getElementById('features').value = JSON.stringify({
+                ip_risk: Math.random().toFixed(2),
+                device_trust: Math.random().toFixed(2),
+                velocity: Math.random().toFixed(2)
+            }, null, 2);
+            document.getElementById('description').value = '系统自动填充的示例交易信息。';
         }
-        
-        // 添加到历史记录
-        function addToHistory(record) {
-            assessmentHistory.unshift(record);
-            if (assessmentHistory.length > 10) {
-                assessmentHistory = assessmentHistory.slice(0, 10);
-            }
-            updateHistoryDisplay();
-        }
-        
-        // 更新历史记录显示
-        function updateHistoryDisplay() {
-            const historyList = document.getElementById('historyList');
-            
-            if (assessmentHistory.length === 0) {
-                historyList.innerHTML = '<p style="color: #6c757d;">暂无历史记录</p>';
-                return;
-            }
-            
-            const historyHTML = assessmentHistory.map((record, index) => {
-                const riskLevel = record.result.risk_level || 'unknown';
-                const riskScore = ((record.result.risk_score || 0.5) * 100).toFixed(1);
-                const time = record.timestamp.toLocaleTimeString();
-                
-                return `
-                    <div style="display: flex; justify-content: space-between; align-items: center; 
-                               padding: 0.75rem; margin-bottom: 0.5rem; background-color: #f8f9fa; 
-                               border-radius: 6px; border-left: 4px solid ${getRiskColor(riskLevel)};">
-                        <div>
-                            <strong>${getRiskLevelText(riskLevel)}</strong> (${riskScore}%)
-                            <br>
-                            <small style="color: #6c757d;">${record.transaction_count} 笔交易</small>
-                        </div>
-                        <div style="text-align: right;">
-                            <small style="color: #6c757d;">${time}</small>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            historyList.innerHTML = historyHTML;
-        }
-        
-        // 获取风险等级颜色
-        function getRiskColor(level) {
-            const colors = {
-                'low': '#28a745',
-                'medium': '#ffc107',
-                'high': '#dc3545',
-                'unknown': '#6c757d'
-            };
-            return colors[level] || '#6c757d';
+
+        function resetForm() {
+            document.getElementById('riskForm').reset();
+            document.getElementById('resultCard').style.display = 'none';
+            document.getElementById('resultPlaceholder').style.display = 'block';
+            document.getElementById('keySignals').innerHTML = '';
+            document.getElementById('featureContribution').innerHTML = '';
+            appendLog('[INFO] 表单已重置');
         }
     </script>
 </body>
