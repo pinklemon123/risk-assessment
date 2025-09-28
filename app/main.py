@@ -11,6 +11,7 @@ from .dq import validate_row
 from .writer import write_raw, write_clean
 from .presign import create_presigned_url
 from .admin import router as admin_router
+from .metrics import metrics_store
 
 MAPPING_PATH = os.getenv("MAPPING_PATH", "config/mapping.yaml")
 cfg = load_mapping(MAPPING_PATH)
@@ -42,6 +43,7 @@ async def healthz():
 
 @app.post("/ingest/transactions", response_model=BatchResponse)
 async def ingest_transactions(payload: BatchRequest, auth=Depends(require_auth)):
+    start_time = time.perf_counter()
     tenant = auth["tenant_id"]
     batch_id = f"b_{tenant}_{int(time.time())}_{uuid.uuid4().hex[:6]}"
     raw_rows = payload.rows
@@ -67,6 +69,16 @@ async def ingest_transactions(payload: BatchRequest, auth=Depends(require_auth))
             failed += 1
 
     write_clean(batch_id, clean_rows)
+
+    processing_duration = time.perf_counter() - start_time
+    metrics_store.record_batch(
+        tenant=tenant,
+        batch_id=batch_id,
+        accepted=accepted,
+        failed=failed,
+        duration_seconds=processing_duration,
+        clean_rows=clean_rows,
+    )
 
     return BatchResponse(
         accepted=accepted,
@@ -263,25 +275,8 @@ async def assess_fraud_risk_endpoint(
 
 @app.get("/api/monitoring/dashboard")
 async def get_monitoring_dashboard():
-    """获取监控面板数据（模拟）"""
-    import random
-    return {
-        "api_metrics": {
-            "requests_per_second": random.randint(50, 200),
-            "average_response_time": random.randint(50, 300),
-            "error_rate": random.random() * 0.05
-        },
-        "business_metrics": {
-            "transactions_processed": random.randint(1000, 5000),
-            "high_risk_rate": random.random() * 0.1,
-            "model_accuracy": 0.85 + random.random() * 0.1
-        },
-        "system_metrics": {
-            "cpu_usage": random.randint(30, 80),
-            "memory_usage": random.randint(40, 85),
-            "disk_usage": random.randint(50, 90)
-        }
-    }
+    """获取监控面板数据，基于真实的摄取统计"""
+    return metrics_store.get_dashboard()
 
 @app.post("/api/batch/process")
 async def process_batch_data(request_data: dict):
