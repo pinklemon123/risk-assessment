@@ -9,3 +9,4 @@ aiofiles==24.1.0
 networkx==3.2.1
 pandas==2.0.3
 python-multipart==0.0.6
+psutil==6.0.0
