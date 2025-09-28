@@ -25,13 +25,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 静态文件服务
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
 # 添加管理路由
 app.include_router(admin_router)
 
-# 添加静态文件服务
+# 静态文件服务
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # 添加根路由，重定向到编辑器
@@ -78,26 +75,56 @@ async def ingest_transactions(payload: BatchRequest, auth=Depends(require_auth))
         feat_ver_hint=time.strftime("%Y-%m-%dT%H:%MZ", time.gmtime())
     )
 
-# 其他静态页面路由
-@app.get("/dashboard.html")
+# 静态页面路由
+@app.get("/dashboard")
 async def dashboard():
     """控制面板"""
     return FileResponse("app/static/dashboard.html")
 
-@app.get("/fraud-detection.html")
+@app.get("/dashboard.html")
+async def dashboard_html():
+    """控制面板"""
+    return FileResponse("app/static/dashboard.html")
+
+@app.get("/fraud-detection")
 async def fraud_detection():
     """欺诈检测页面"""
     return FileResponse("app/static/fraud-detection.html")
 
-@app.get("/monitoring.html")
+@app.get("/fraud-detection.html")
+async def fraud_detection_html():
+    """欺诈检测页面"""
+    return FileResponse("app/static/fraud-detection.html")
+
+@app.get("/monitoring")
 async def monitoring():
     """监控中心页面"""
     return FileResponse("app/static/monitoring.html")
 
-@app.get("/batch-process.html")
+@app.get("/monitoring.html")
+async def monitoring_html():
+    """监控中心页面"""
+    return FileResponse("app/static/monitoring.html")
+
+@app.get("/batch-process")
 async def batch_process():
     """批量处理页面"""
     return FileResponse("app/static/batch-process.html")
+
+@app.get("/batch-process.html")
+async def batch_process_html():
+    """批量处理页面"""
+    return FileResponse("app/static/batch-process.html")
+
+@app.get("/config")
+async def config():
+    """配置管理页面"""
+    return FileResponse("app/static/index.html")
+
+@app.get("/index.html")
+async def index_html():
+    """配置管理页面"""
+    return FileResponse("app/static/index.html")
 
 # 欺诈检测API接口
 @app.post("/api/fraud/assess")

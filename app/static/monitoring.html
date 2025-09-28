@@ -14,56 +14,67 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f5f5f5;
             color: #333;
         }
         
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
             padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .navbar-content {
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
-        .navbar h1 {
-            font-size: 1.8rem;
+        .header h1 {
+            font-size: 1.5rem;
             font-weight: 600;
         }
         
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
         }
         
         .nav-links a {
-            color: white;
-            text-decoration: none;
             padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
             border-radius: 6px;
-            transition: background-color 0.3s;
+            background: white;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.875rem;
+            transition: all 0.2s;
         }
         
-        .nav-links a:hover, .nav-links a.active {
-            background-color: rgba(255,255,255,0.2);
+        .nav-links a:hover {
+            background: #f0f0f0;
+        }
+        
+        .nav-links a.active {
+            background: #000;
+            color: white;
+            border-color: #000;
         }
         
         .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
         
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -71,15 +82,14 @@
         .card {
             background: white;
             border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
             padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid #e9ecef;
         }
         
         .card h3 {
+            font-size: 1.25rem;
             margin-bottom: 1rem;
-            color: #495057;
-            font-size: 1.2rem;
             font-weight: 600;
         }
         
@@ -89,14 +99,16 @@
             margin: 0.5rem 0;
         }
         
-        .metric-value.success { color: #28a745; }
-        .metric-value.warning { color: #ffc107; }
-        .metric-value.danger { color: #dc3545; }
-        .metric-value.info { color: #007bff; }
+        .metric-value.success { color: #000; }
+        .metric-value.warning { color: #666; }
+        .metric-value.danger { color: #000; }
+        .metric-value.info { color: #333; }
         
         .metric-label {
-            color: #6c757d;
-            font-size: 0.9rem;
+            color: #666;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .chart-container {
@@ -106,85 +118,92 @@
         }
         
         .alert {
-            padding: 1rem;
+            padding: 0.75rem;
             border-radius: 6px;
             margin-bottom: 1rem;
-            border-left: 4px solid;
+            border: 1px solid #eee;
         }
         
         .alert-critical {
-            background-color: #f8d7da;
-            border-left-color: #dc3545;
-            color: #721c24;
+            background-color: #f5f5f5;
+            border-left: 4px solid #000;
+            color: #000;
         }
         
         .alert-warning {
-            background-color: #fff3cd;
-            border-left-color: #ffc107;
-            color: #856404;
+            background-color: #f8f9fa;
+            border-left: 4px solid #666;
+            color: #333;
         }
         
         .alert-info {
-            background-color: #d1ecf1;
-            border-left-color: #17a2b8;
-            color: #0c5460;
+            background-color: #fafafa;
+            border-left: 4px solid #999;
+            color: #333;
         }
         
         .status-indicator {
             display: inline-block;
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             margin-right: 8px;
         }
         
-        .status-indicator.online { background-color: #28a745; }
-        .status-indicator.warning { background-color: #ffc107; }
-        .status-indicator.offline { background-color: #dc3545; }
+        .status-indicator.online { background-color: #000; }
+        .status-indicator.warning { background-color: #666; }
+        .status-indicator.offline { background-color: #999; }
         
         .log-entry {
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.8rem;
+            font-family: monospace;
+            font-size: 0.75rem;
             padding: 0.5rem;
             background-color: #f8f9fa;
             border-radius: 4px;
             margin-bottom: 0.5rem;
-            border-left: 3px solid #007bff;
+            border-left: 3px solid #000;
         }
         
         .log-entry.error {
-            border-left-color: #dc3545;
-            background-color: #fff5f5;
+            border-left-color: #000;
+            background-color: #f5f5f5;
         }
         
         .log-entry.warning {
-            border-left-color: #ffc107;
-            background-color: #fffbf0;
+            border-left-color: #666;
+            background-color: #f8f9fa;
         }
         
         .btn {
             padding: 0.5rem 1rem;
-            border: none;
+            border: 1px solid #ddd;
             border-radius: 6px;
+            background: white;
             cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
             text-decoration: none;
             display: inline-block;
-            transition: all 0.3s;
-            font-size: 0.9rem;
+        }
+        
+        .btn:hover {
+            background: #f0f0f0;
         }
         
         .btn-primary {
-            background-color: #007bff;
+            background: #000;
             color: white;
+            border-color: #000;
         }
         
         .btn-primary:hover {
-            background-color: #0056b3;
+            background: #333;
         }
         
         .btn-danger {
-            background-color: #dc3545;
+            background: #000;
             color: white;
+            border-color: #000;
         }
         
         .btn-success {
@@ -237,18 +256,18 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-content">
-            <h1>🛡️ 欺诈检测系统</h1>
+    <div class="header">
+        <div class="header-content">
+            <h1>欺诈检测系统 - 监控中心</h1>
             <div class="nav-links">
-                <a href="dashboard.html">控制面板</a>
-                <a href="fraud-detection.html">欺诈检测</a>
-                <a href="monitoring.html" class="active">监控中心</a>
-                <a href="index.html">配置管理</a>
-                <a href="batch-process.html">批量处理</a>
+                <a href="/dashboard">控制面板</a>
+                <a href="/fraud-detection">欺诈检测</a>
+                <a href="/monitoring" class="active">监控中心</a>
+                <a href="/">配置管理</a>
+                <a href="/batch-process">批量处理</a>
             </div>
         </div>
-    </nav>
+    </div>
 
     <div class="container">
         <!-- 实时监控指标 -->

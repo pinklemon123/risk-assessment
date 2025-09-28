@@ -46,6 +46,32 @@
             gap: 0.5rem;
         }
         
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-links a {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .nav-links a:hover {
+            background: #f0f0f0;
+        }
+        
+        .nav-links a.active {
+            background: #000;
+            color: white;
+            border-color: #000;
+        }
+        
         .btn {
             padding: 0.5rem 1rem;
             border: 1px solid #ddd;
@@ -224,8 +250,21 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>Mapping 可视化编辑器</h1>
-            <div class="header-buttons">
+            <h1>欺诈检测系统 - 配置管理</h1>
+            <div class="nav-links" style="display: flex; gap: 1rem;">
+                <a href="/dashboard">控制面板</a>
+                <a href="/fraud-detection">欺诈检测</a>
+                <a href="/monitoring">监控中心</a>
+                <a href="/" class="active">配置管理</a>
+                <a href="/batch-process">批量处理</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- 操作按钮 -->
+        <div class="card">
+            <div style="display: flex; gap: 0.5rem; justify-content: center;">
                 <button class="btn" onclick="loadFromServer()">
                     <span id="load-text">从服务器加载</span>
                 </button>
@@ -237,7 +276,6 @@
                 <button class="btn" onclick="document.getElementById('file-input').click()">上传 YAML</button>
             </div>
         </div>
-    </div>
 
     <div class="container">
         <div id="error-message" class="error hidden"></div>

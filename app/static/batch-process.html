@@ -13,150 +13,164 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f5f5f5;
             color: #333;
         }
         
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
             padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .navbar-content {
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
-        .navbar h1 {
-            font-size: 1.8rem;
+        .header h1 {
+            font-size: 1.5rem;
             font-weight: 600;
         }
         
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
         }
         
         .nav-links a {
-            color: white;
-            text-decoration: none;
             padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
             border-radius: 6px;
-            transition: background-color 0.3s;
+            background: white;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.875rem;
+            transition: all 0.2s;
         }
         
-        .nav-links a:hover, .nav-links a.active {
-            background-color: rgba(255,255,255,0.2);
+        .nav-links a:hover {
+            background: #f0f0f0;
+        }
+        
+        .nav-links a.active {
+            background: #000;
+            color: white;
+            border-color: #000;
         }
         
         .container {
             max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
+            margin: 0 auto;
+            padding: 2rem;
         }
         
         .card {
             background: white;
             border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+            padding: 1.5rem;
         }
         
         .card h2 {
-            margin-bottom: 1.5rem;
-            color: #495057;
-            font-size: 1.4rem;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
             font-weight: 600;
         }
         
         .upload-area {
-            border: 2px dashed #007bff;
+            border: 2px dashed #ddd;
             border-radius: 8px;
             padding: 2rem;
             text-align: center;
-            background-color: #f8f9ff;
+            background-color: #fafafa;
             cursor: pointer;
             transition: all 0.3s;
         }
         
         .upload-area:hover {
-            border-color: #0056b3;
-            background-color: #e3f2fd;
+            border-color: #000;
+            background-color: #f5f5f5;
         }
         
         .upload-area.dragover {
-            border-color: #28a745;
-            background-color: #d4edda;
+            border-color: #000;
+            background-color: #f0f0f0;
         }
         
         .upload-icon {
-            font-size: 3rem;
-            color: #007bff;
+            font-size: 2.5rem;
+            color: #666;
             margin-bottom: 1rem;
         }
         
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #495057;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+            color: #666;
         }
         
         .form-control {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ced4da;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
             border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
+            font-size: 0.875rem;
         }
         
         .form-control:focus {
             outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+            border-color: #000;
         }
         
         textarea.form-control {
-            min-height: 150px;
-            font-family: 'Monaco', 'Courier New', monospace;
+            min-height: 120px;
+            font-family: monospace;
+            font-size: 0.75rem;
         }
         
         .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
             border-radius: 6px;
+            background: white;
             cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
             text-decoration: none;
             display: inline-block;
-            transition: all 0.3s;
-            font-size: 1rem;
-            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background: #f0f0f0;
         }
         
         .btn-primary {
-            background-color: #007bff;
+            background: #000;
             color: white;
+            border-color: #000;
         }
         
         .btn-primary:hover:not(:disabled) {
-            background-color: #0056b3;
+            background: #333;
         }
         
         .btn-success {
-            background-color: #28a745;
+            background: #000;
             color: white;
+            border-color: #000;
         }
         
         .btn:disabled {
@@ -166,16 +180,16 @@
         
         .progress {
             width: 100%;
-            height: 20px;
-            background-color: #e9ecef;
-            border-radius: 10px;
+            height: 16px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
             overflow: hidden;
             margin: 1rem 0;
         }
         
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #007bff, #0056b3);
+            background: #000;
             width: 0%;
             transition: width 0.3s ease;
         }
@@ -188,67 +202,70 @@
         
         .result-table th,
         .result-table td {
-            padding: 0.75rem;
+            padding: 0.5rem;
             text-align: left;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid #eee;
         }
         
         .result-table th {
             background-color: #f8f9fa;
             font-weight: 600;
-            color: #495057;
+            color: #666;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .status-badge {
             padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
             font-weight: 600;
         }
         
         .status-success {
-            background-color: #d1ecf1;
-            color: #0c5460;
+            background-color: #f0f0f0;
+            color: #000;
         }
         
         .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #f5f5f5;
+            color: #000;
         }
         
         .status-warning {
-            background-color: #fff3cd;
-            color: #856404;
+            background-color: #f8f9fa;
+            color: #333;
         }
         
         .risk-badge {
             padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
             font-weight: 600;
         }
         
         .risk-low {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: #f0f0f0;
+            color: #000;
         }
         
         .risk-medium {
-            background-color: #fff3cd;
-            color: #856404;
+            background-color: #f5f5f5;
+            color: #333;
         }
         
         .risk-high {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #f8f9fa;
+            color: #000;
         }
         
         .loading {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #007bff;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #000;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-right: 0.5rem;
@@ -260,27 +277,25 @@
         }
         
         .alert {
-            padding: 1rem;
+            padding: 0.75rem;
             border-radius: 6px;
             margin-bottom: 1rem;
+            border: 1px solid #eee;
         }
         
         .alert-info {
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
-            color: #0c5460;
+            background-color: #f8f9fa;
+            color: #333;
         }
         
         .alert-success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
+            background-color: #f0f0f0;
+            color: #000;
         }
         
         .alert-danger {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
+            background-color: #f5f5f5;
+            color: #000;
         }
         
         .grid {
@@ -323,18 +338,18 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-content">
-            <h1>🛡️ 欺诈检测系统</h1>
+    <div class="header">
+        <div class="header-content">
+            <h1>欺诈检测系统 - 批量处理</h1>
             <div class="nav-links">
-                <a href="dashboard.html">控制面板</a>
-                <a href="fraud-detection.html">欺诈检测</a>
-                <a href="monitoring.html">监控中心</a>
-                <a href="index.html">配置管理</a>
-                <a href="batch-process.html" class="active">批量处理</a>
+                <a href="/dashboard">控制面板</a>
+                <a href="/fraud-detection">欺诈检测</a>
+                <a href="/monitoring">监控中心</a>
+                <a href="/">配置管理</a>
+                <a href="/batch-process" class="active">批量处理</a>
             </div>
         </div>
-    </nav>
+    </div>
 
     <div class="container">
         <!-- 批量上传 -->
