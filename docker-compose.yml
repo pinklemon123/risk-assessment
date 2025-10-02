@@ -1,5 +1,4 @@
-﻿version: "3.9"
-services:
+﻿services:
   backend:
     build: .
     ports: 
@@ -8,5 +7,8 @@ services:
       - API_KEYS=test_key
       - ALLOWED_TENANTS=acme
       - MAPPING_PATH=/app/config/mapping.yaml
+      - DB_PATH=/app/data/app.db
     volumes:
-      - ./config:/app/config
+      - ./data:/app/data
+      - ./complex_transaction_dataset.json:/app/complex_transaction_dataset.json
+      - ./examples:/app/examples

@@ -7,6 +7,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app app
 COPY config config
 COPY data data
+COPY *.json .
+COPY generate_complex_dataset.py .
+COPY complex_analysis_engine.py .
 ENV API_KEYS=test_key
 ENV ALLOWED_TENANTS=acme
 ENV MAPPING_PATH=config/mapping.yaml

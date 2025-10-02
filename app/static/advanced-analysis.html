@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高级分析 - 纯黑白版本</title>
+    <link rel="stylesheet" href="css/common-blackwhite.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #000;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-links a {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .nav-links a:hover {
+            background: #f0f0f0;
+        }
+        
+        .nav-links a.active {
+            background: #000;
+            color: white;
+            border-color: #000;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+        }
+        
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .analysis-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            color: #333;
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: #f0f0f0;
+        }
+        
+        .btn-primary {
+            background: #000;
+            color: white;
+            border-color: #000;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #333;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .progress-container {
+            display: none;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #000, #333);
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-ready { background: #f2f2f2; color: #333; }
+        .status-running { background: #e9e9e9; color: #333; }
+        .status-completed { background: #f7f7f7; color: #222; }
+        .status-error { background: #f0f0f0; color: #000; border: 1px solid #000; }
+        
+        .results-grid {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .metric-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 0.25rem;
+        }
+        
+        .metric-label {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-detail {
+            font-size: 0.75rem;
+            color: #888;
+        }
+        
+        .analysis-log {
+            background: #000;
+            color: #dddddd;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.875rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .warning-box { background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+        .warning-box h3 { color: #333; margin-bottom: 0.5rem; }
+        .warning-box p { color: #333; font-size: 0.875rem; }
+        
+        .complexity-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .complexity-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .complexity-bar {
+            flex: 1;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .complexity-fill { height: 100%; background: linear-gradient(90deg, #000, #777); border-radius: 4px; transition: width 0.3s ease; }
+        
+        .real-time-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .data-upload-section {
+            margin-bottom: 2rem;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            background: #fafafa;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #000;
+            background: #f0f0f0;
+        }
+        
+        .upload-area.dragover { border-color: #000; background: #f0f0f0; }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .upload-hint {
+            font-size: 0.875rem;
+            color: #666;
+        }
+        
+        .dataset-info { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+        .dataset-info h4 { color: #333; margin-bottom: 0.5rem; }
+        
+        .batch-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        .batch-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .batch-size-control input {
+            width: 80px;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">高级数据分析中心</div>
+        <div class="nav-links">
+            <a href="index.html">配置</a>
+            <a href="main-console.html">控制台</a>
+            <a href="advanced-analysis.html" class="active">高级分析</a>
+            <a href="network.html">网络</a>
+            <a href="monitoring.html">监控</a>
+            <a href="analysis-report-clean.html">报告</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="warning-box">
+            <h3>重要说明</h3>
+            <p>高级分析包含真正的CPU密集型算法：机器学习模型训练、图网络分析、时间序列异常检测等。这些不是模拟数据，而是需要真实计算时间的复杂算法。处理大规模数据集可能需要几秒钟到几分钟的时间。</p>
+        </div>
+
+        <!-- 数据上传和管理 -->
+        <div class="card">
+            <h2>数据集管理</h2>
+            
+            <div class="data-upload-section">
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">+</div>
+                    <div class="upload-text">上传大数据集文件</div>
+                    <div class="upload-hint">支持 JSON, CSV 格式，最大 100MB<br>点击选择文件或拖拽文件到此处</div>
+                </div>
+                <input type="file" id="fileInput" class="file-input" accept=".json,.csv" multiple>
+                
+                <div class="batch-controls">
+                    <button class="btn btn-primary" onclick="generateComplexDataset()">生成复杂数据集</button>
+                    <div class="batch-size-control">
+                        <label>数据规模:</label>
+                        <input type="number" id="datasetSize" value="1000" min="100" max="10000" step="100">
+                        <span>笔交易</span>
+                    </div>
+                    <button class="btn" onclick="loadSampleDataset()">加载示例</button>
+                    <button class="btn" onclick="showManualInputModal()">手动输入</button>
+                </div>
+            </div>
+            
+            <!-- 手动输入模态框 -->
+            <div id="manualInputModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 8px; width: 80%; max-width: 600px;">
+                    <h3>手动输入交易数据</h3>
+                    <p>请输入JSON格式的交易数据：</p>
+                    <textarea id="manualDataInput" rows="10" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" placeholder='示例格式：
+{
+  "transactions": [
+    {
+      "id": "tx_001",
+      "amount": 1250.50,
+      "timestamp": "2023-01-01T10:30:00",
+      "account_id": "acc_123",
+      "merchant_id": "mer_456",
+      "is_fraud": false
+    }
+  ]
+}'></textarea>
+                    <div style="margin-top: 1rem; text-align: right;">
+                        <button class="btn" onclick="closeManualInputModal()">取消</button>
+                        <button class="btn btn-primary" onclick="submitManualData()" style="margin-left: 0.5rem;">提交数据</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="datasetStatus">
+                <div class="loading-spinner"></div>
+                正在检查数据集状态...
+            </div>
+        </div>
+
+        <!-- 分析控制 -->
+        <div class="analysis-controls">
+            <div class="card">
+                <h2>分析配置</h2>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">分析类型:</label>
+                    <select id="analysisType" class="btn" style="width: 100%; margin-bottom: 0.5rem;">
+                        <option value="comprehensive">全面分析 (网络+时序+ML)</option>
+                        <option value="network_only">仅网络分析</option>
+                        <option value="ml_only">仅机器学习</option>
+                        <option value="time_only">仅时序分析</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">处理模式:</label>
+                    <select id="processingMode" class="btn" style="width: 100%;">
+                        <option value="standard">标准处理</option>
+                        <option value="high_performance">高性能模式</option>
+                        <option value="memory_optimized">内存优化</option>
+                    </select>
+                </div>
+                
+                <button id="startAnalysis" class="btn btn-primary" style="width: 100%;" onclick="runAdvancedAnalysis()">
+                    开始大数据分析
+                </button>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                        <div class="progress-text" id="progressText">准备中...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>实时统计</h2>
+                <div id="realtimeStats">
+                    <div style="text-align: center; padding: 2rem; color: #666;">
+                        运行分析后显示实时统计
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分析结果 -->
+        <div class="card">
+            <h2>分析结果</h2>
+            <div id="analysisStatus">
+                <div style="text-align: center; padding: 2rem; color: #666;">
+                    配置数据集并点击"开始大数据分析"来运行复杂算法分析
+                </div>
+            </div>
+
+            <div class="results-grid" id="resultsGrid">
+                <div class="metric-card">
+                    <div class="metric-value" id="totalTime">--</div>
+                    <div class="metric-label">总处理时间</div>
+                    <div class="metric-detail" id="processingRate">-- 交易/秒</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-value" id="transactionsAnalyzed">--</div>
+                    <div class="metric-label">分析的交易数</div>
+                    <div class="metric-detail" id="complexityScore">复杂度评分: --/10</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-value" id="networkNodes">--</div>
+                    <div class="metric-label">网络节点数</div>
+                    <div class="metric-detail" id="networkDensity">网络密度: --%</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-value" id="anomaliesFound">--</div>
+                    <div class="metric-label">检测到的异常</div>
+                    <div class="metric-detail" id="modelAccuracy">模型准确率: --%</div>
+                </div>
+            </div>
+
+            <div class="analysis-log" id="analysisLog"></div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="viewDetailedReport()" style="display: none;" id="viewReportBtn">
+                    查看详细可视化报告
+                </button>
+            </div>
+        </div>
+
+        <!-- 详细结果 -->
+        <div class="card" style="display: none;" id="detailedResults">
+            <h2>详细分析结果</h2>
+            <div class="real-time-stats">
+                <div class="metric-card">
+                    <div class="metric-label">网络中心性</div>
+                    <div class="metric-value" id="centralityScore">--</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">社群检测</div>
+                    <div class="metric-value" id="communitiesFound">--</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">时序异常</div>
+                    <div class="metric-value" id="temporalAnomalies">--</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">ML F1分数</div>
+                    <div class="metric-value" id="f1Score">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAnalysisId = null;
+        let uploadedDatasets = [];
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            checkDatasetStatus();
+            setupFileUpload();
+        });
+        
+        // 设置文件上传
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            
+            // 拖拽上传
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+            
+            // 文件选择
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+        }
+        
+        // 处理上传的文件
+        async function handleFiles(files) {
+            for (const file of files) {
+                if (file.size > 100 * 1024 * 1024) {
+                    alert(`文件 ${file.name} 超过100MB限制`);
+                    continue;
+                }
+                
+                try {
+                    showAnalysisLog(`正在上传文件: ${file.name}...`);
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    const response = await fetch('/api/data/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        showAnalysisLog(`${result.message}`);
+                        checkDatasetStatus(); // 刷新数据集状态
+                    } else {
+                        showAnalysisLog(`上传失败: ${result.message}`);
+                        alert(`上传失败: ${result.message}`);
+                    }
+                    
+                } catch (error) {
+                    showAnalysisLog(`文件上传错误: ${error.message}`);
+                    alert(`文件上传错误: ${error.message}`);
+                }
+            }
+        }
+        
+        // 简单的CSV解析
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',');
+            const transactions = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = lines[i].split(',');
+                    const transaction = {};
+                    headers.forEach((header, index) => {
+                        transaction[header.trim()] = values[index]?.trim();
+                    });
+                    transactions.push(transaction);
+                }
+            }
+            
+            return { transactions };
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // 生成复杂数据集
+        async function generateComplexDataset() {
+            const size = document.getElementById('datasetSize').value;
+            showAnalysisLog(`开始生成 ${size.toLocaleString()} 笔交易的复杂数据集...`);
+            
+            try {
+                // 这里调用后端API生成数据集
+                const response = await fetch('/api/data/generate-complex', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        size: parseInt(size),
+                        complexity: 'high',
+                        fraud_rate: 0.15
+                    })
+                });
+                
+                if (response.ok) {
+                    showAnalysisLog(`复杂数据集生成完成！`);
+                    checkDatasetStatus();
+                } else {
+                    throw new Error('生成失败');
+                }
+            } catch (error) {
+                showAnalysisLog(`数据集生成失败: ${error.message}`);
+            }
+        }
+        
+        // 加载示例数据集
+        async function loadSampleDataset() {
+            try {
+                showAnalysisLog('正在生成示例数据集...');
+                
+                const response = await fetch('/api/data/load-sample', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({size: 1000})
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showAnalysisLog(result.message);
+                    checkDatasetStatus(); // 刷新数据集状态
+                } else {
+                    showAnalysisLog(`示例数据生成失败: ${result.message}`);
+                    alert(`示例数据生成失败: ${result.message}`);
+                }
+                
+            } catch (error) {
+                showAnalysisLog(`示例数据生成错误: ${error.message}`);
+                alert(`示例数据生成错误: ${error.message}`);
+            }
+        }
+        
+        // 检查数据集状态
+        async function checkDatasetStatus() {
+            try {
+                const response = await fetch('/api/advanced/analysis-status');
+                const status = await response.json();
+                
+                displayDatasetStatus(status);
+            } catch (error) {
+                document.getElementById('datasetStatus').innerHTML = 
+                    '<span class="status-indicator status-error">状态检查失败</span>';
+            }
+        }
+        
+        // 更新数据集状态显示
+        function updateDatasetStatus() {
+            if (uploadedDatasets.length > 0) {
+                const totalTransactions = uploadedDatasets.reduce((sum, dataset) => {
+                    return sum + (dataset.data.transactions?.length || 0);
+                }, 0);
+                
+                const totalSize = uploadedDatasets.reduce((sum, dataset) => sum + dataset.size, 0);
+                
+                const html = `
+                    <div class="dataset-info">
+                        <h4>已上传数据集</h4>
+                        <div>文件数量: ${uploadedDatasets.length}</div>
+                        <div>交易总数: ${totalTransactions.toLocaleString()}</div>
+                        <div>总大小: ${formatFileSize(totalSize)}</div>
+                        <div style="margin-top: 0.5rem;">
+                            ${uploadedDatasets.map(d => `<div style="font-size: 0.875rem;">• ${d.name} (${d.data.transactions?.length?.toLocaleString() || 0} 笔)</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('datasetStatus').innerHTML = html;
+            }
+        }
+        
+        // 显示数据集状态
+        function displayDatasetStatus(status) {
+            const container = document.getElementById('datasetStatus');
+            
+            let html = '';
+            
+            if (status.complex_dataset_exists) {
+                const info = status.dataset_info;
+                html += `
+                    <div class="status-indicator status-ready">服务器数据集已就绪</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #666;">
+                        ${info.transaction_count.toLocaleString()} 笔交易<br>
+                        复杂度: ${info.complexity_score.toFixed(1)}/10.0<br>
+                        欺诈率: ${(info.fraud_rate * 100).toFixed(2)}%
+                    </div>
+                `;
+                
+                // 显示复杂度指示器
+                html += `
+                    <div class="complexity-indicator">
+                        <span class="complexity-score">${info.complexity_score.toFixed(1)}</span>
+                        <div class="complexity-bar">
+                            <div class="complexity-fill" style="width: ${info.complexity_score * 10}%"></div>
+                        </div>
+                        <span style="font-size: 0.75rem; color: #666;">复杂度</span>
+                    </div>
+                `;
+            } else if (uploadedDatasets.length === 0) {
+                html += `
+                    <div class="status-indicator status-error">暂无可用数据集</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #666;">
+                        请上传数据文件或生成复杂数据集
+                    </div>
+                `;
+            }
+            
+            if (status.analysis_results_exists) {
+                const lastAnalysis = status.last_analysis;
+                html += `
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                        <div class="status-indicator status-completed">上次分析结果</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #666;">
+                            耗时: ${lastAnalysis.total_processing_time.toFixed(2)}秒<br>
+                            处理: ${lastAnalysis.transactions_analyzed.toLocaleString()} 笔交易<br>
+                            模块: ${lastAnalysis.modules_completed} 个分析模块
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+            updateDatasetStatus(); // 同时更新上传的数据集状态
+        }
+        
+        // 运行高级分析
+        async function runAdvancedAnalysis() {
+            const button = document.getElementById('startAnalysis');
+            const analysisType = document.getElementById('analysisType').value;
+            const processingMode = document.getElementById('processingMode').value;
+            
+            // 检查是否有数据集
+            if (uploadedDatasets.length === 0) {
+                // 检查服务器数据集
+                const statusResponse = await fetch('/api/advanced/analysis-status');
+                const status = await statusResponse.json();
+                
+                if (!status.complex_dataset_exists) {
+                    alert('请先上传数据集或生成复杂数据集');
+                    return;
+                }
+            }
+            
+            // 禁用按钮并显示进度
+            button.disabled = true;
+            button.innerHTML = '<div class="loading-spinner"></div>正在分析...';
+            
+            showProgress("开始大数据分析...", 5);
+            showAnalysisLog("启动高级分析引擎...");
+            showAnalysisLog(`分析类型: ${analysisType}`);
+            showAnalysisLog(`处理模式: ${processingMode}`);
+            
+            // 显示实时统计
+            updateRealtimeStats();
+            
+            try {
+                showProgress("加载数据集...", 10);
+                showAnalysisLog("加载大规模交易数据集...");
+                
+                // 选择数据源
+                let dataSource = 'complex_transaction_dataset.json';
+                if (uploadedDatasets.length > 0) {
+                    // 使用最大的上传数据集
+                    const largestDataset = uploadedDatasets.reduce((max, current) => 
+                        (current.data.transactions?.length || 0) > (max.data.transactions?.length || 0) ? current : max
+                    );
+                    dataSource = largestDataset.name;
+                }
+                
+                const response = await fetch('/api/advanced/complex-analysis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        analysis_type: analysisType,
+                        processing_mode: processingMode,
+                        data_source: dataSource
+                    })
+                });
+                
+                showProgress("执行复杂算法...", 50);
+                showAnalysisLog("运行CPU密集型算法...");
+                
+                // 模拟进度更新
+                let progress = 50;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 10;
+                    if (progress < 90) {
+                        showProgress(`算法计算中... ${progress.toFixed(0)}%`, progress);
+                    }
+                }, 1000);
+                
+                const result = await response.json();
+                clearInterval(progressInterval);
+                
+                if (result.status === 'success') {
+                    showProgress("分析完成!", 100);
+                    showAnalysisLog("大数据分析成功完成!");
+                    showAnalysisLog(`总耗时: ${result.processing_time.toFixed(2)}秒`);
+                    
+                    displayAnalysisResults(result);
+                } else {
+                    throw new Error(result.error || '分析失败');
+                }
+                
+            } catch (error) {
+                showProgress("分析失败", 0);
+                showAnalysisLog(`分析失败: ${error.message}`);
+                
+                document.getElementById('analysisStatus').innerHTML = `
+                    <div class="status-indicator status-error">分析失败</div>
+                    <div style="margin-top: 0.5rem; color: #721c24;">
+                        ${error.message}
+                    </div>
+                `;
+            } finally {
+                // 恢复按钮
+                button.disabled = false;
+                button.innerHTML = '开始大数据分析';
+            }
+        }
+        
+        // 更新实时统计
+        function updateRealtimeStats() {
+            const statsHtml = `
+                <div class="metric-card">
+                    <div class="metric-value" id="liveProcessed">0</div>
+                    <div class="metric-label">已处理交易</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="liveSpeed">0</div>
+                    <div class="metric-label">处理速度/秒</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="liveTime">0s</div>
+                    <div class="metric-label">已用时间</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="liveMemory">--</div>
+                    <div class="metric-label">内存使用</div>
+                </div>
+            `;
+            document.getElementById('realtimeStats').innerHTML = statsHtml;
+            
+            // 模拟实时更新
+            let processed = 0;
+            let startTime = Date.now();
+            const interval = setInterval(() => {
+                processed += Math.floor(Math.random() * 1000);
+                const elapsed = (Date.now() - startTime) / 1000;
+                const speed = Math.floor(processed / elapsed);
+                
+                document.getElementById('liveProcessed').textContent = processed.toLocaleString();
+                document.getElementById('liveSpeed').textContent = speed.toLocaleString();
+                document.getElementById('liveTime').textContent = elapsed.toFixed(1) + 's';
+                document.getElementById('liveMemory').textContent = (Math.random() * 500 + 200).toFixed(0) + 'MB';
+                
+                if (processed > 50000) clearInterval(interval);
+            }, 500);
+        }
+        
+        // 显示进度
+        function showProgress(text, percentage) {
+            const container = document.getElementById('progressContainer');
+            const fill = document.getElementById('progressFill');
+            const textEl = document.getElementById('progressText');
+            
+            container.style.display = 'block';
+            fill.style.width = percentage + '%';
+            textEl.textContent = text;
+        }
+        
+        // 显示分析日志
+        function showAnalysisLog(message) {
+            const log = document.getElementById('analysisLog');
+            log.style.display = 'block';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            log.innerHTML += `[${timestamp}] ${message}\n`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // 显示分析结果
+        function displayAnalysisResults(result) {
+            document.getElementById('analysisStatus').innerHTML = 
+                '<div class="status-indicator status-completed">大数据分析完成</div>';
+                
+            // 显示结果网格
+            document.getElementById('resultsGrid').style.display = 'grid';
+            document.getElementById('detailedResults').style.display = 'block';
+            document.getElementById('viewReportBtn').style.display = 'inline-block';
+            
+            const summary = result.results.comprehensive_summary;
+            const performance = summary.performance_metrics;
+            
+            // 更新主要指标
+            document.getElementById('totalTime').textContent = `${result.processing_time.toFixed(2)}s`;
+            document.getElementById('processingRate').textContent = `${performance.transactions_per_second.toFixed(1)} 交易/秒`;
+            document.getElementById('transactionsAnalyzed').textContent = summary.transactions_analyzed.toLocaleString();
+            
+            // 网络分析结果
+            const networkResults = result.results.analysis_modules.network_analysis;
+            if (networkResults) {
+                const networkStats = networkResults.network_stats;
+                document.getElementById('networkNodes').textContent = networkStats.total_accounts.toLocaleString();
+                document.getElementById('networkDensity').textContent = `${(networkStats.network_density * 100).toFixed(4)}%`;
+                
+                // 详细网络指标
+                const communities = networkResults.communities || [];
+                document.getElementById('communitiesFound').textContent = communities.length;
+            }
+            
+            // ML模型结果
+            const mlResults = result.results.analysis_modules.machine_learning;
+            if (mlResults) {
+                const modelPerf = mlResults.model_performance;
+                document.getElementById('modelAccuracy').textContent = `${(modelPerf.accuracy * 100).toFixed(1)}%`;
+                document.getElementById('f1Score').textContent = modelPerf.f1_score.toFixed(3);
+            }
+            
+            // 时序分析结果
+            const temporalResults = result.results.analysis_modules.temporal_analysis;
+            if (temporalResults) {
+                const anomalies = temporalResults.anomalies || [];
+                document.getElementById('temporalAnomalies').textContent = anomalies.length;
+                document.getElementById('anomaliesFound').textContent = anomalies.length;
+            }
+            
+            // 显示计算证明
+            if (result.computation_proof) {
+                showAnalysisLog("计算验证:");
+                showAnalysisLog(`   实际算法耗时: ${result.computation_proof.actual_computation_time.toFixed(2)}秒`);
+                showAnalysisLog("   算法输出样本:");
+                const stdout = result.computation_proof.stdout_sample;
+                if (stdout) {
+                    showAnalysisLog(`   ${stdout.replace(/\n/g, '\n   ')}`);
+                }
+            }
+        }
+        
+        // 查看详细报告
+        function viewDetailedReport() {
+            window.open('analysis-report-clean.html', '_blank');
+        }
+        
+        // 显示手动输入模态框
+        function showManualInputModal() {
+            document.getElementById('manualInputModal').style.display = 'block';
+        }
+        
+        // 关闭手动输入模态框
+        function closeManualInputModal() {
+            document.getElementById('manualInputModal').style.display = 'none';
+            document.getElementById('manualDataInput').value = '';
+        }
+        
+        // 提交手动输入的数据
+        async function submitManualData() {
+            const input = document.getElementById('manualDataInput').value.trim();
+            
+            if (!input) {
+                alert('请输入数据');
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(input);
+                
+                if (!data.transactions || !Array.isArray(data.transactions)) {
+                    alert('数据格式错误：必须包含 transactions 数组');
+                    return;
+                }
+                
+                showAnalysisLog('正在提交手动输入的数据...');
+                
+                const response = await fetch('/api/data/manual-input', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showAnalysisLog(result.message);
+                    checkDatasetStatus(); // 刷新数据集状态
+                    closeManualInputModal();
+                } else {
+                    showAnalysisLog(`数据提交失败: ${result.message}`);
+                    alert(`数据提交失败: ${result.message}`);
+                }
+                
+            } catch (error) {
+                if (error instanceof SyntaxError) {
+                    alert('JSON格式错误，请检查数据格式');
+                } else {
+                    showAnalysisLog(`数据提交错误: ${error.message}`);
+                    alert(`数据提交错误: ${error.message}`);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

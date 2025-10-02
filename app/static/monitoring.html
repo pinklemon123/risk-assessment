@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欺诈检测系统 - 监控中心</title>
+    <title>欺诈检测系统 - 监控中心 - 纯黑白版本</title>
+    <link rel="stylesheet" href="css/common-blackwhite.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -207,8 +208,9 @@
         }
         
         .btn-success {
-            background-color: #28a745;
+            background: #000;
             color: white;
+            border-color: #000;
         }
         
         .refresh-indicator {
@@ -216,7 +218,7 @@
             width: 12px;
             height: 12px;
             border: 2px solid #f3f3f3;
-            border-top: 2px solid #007bff;
+            border-top: 2px solid #000;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-left: 0.5rem;
@@ -241,8 +243,8 @@
         }
         
         .tab.active {
-            border-bottom-color: #007bff;
-            color: #007bff;
+            border-bottom-color: #000;
+            color: #000;
             font-weight: 600;
         }
         
@@ -260,11 +262,12 @@
         <div class="header-content">
             <h1>欺诈检测系统 - 监控中心</h1>
             <div class="nav-links">
-                <a href="/dashboard">控制面板</a>
-                <a href="/fraud-detection">欺诈检测</a>
-                <a href="/monitoring" class="active">监控中心</a>
-                <a href="/">配置管理</a>
-                <a href="/batch-process">批量处理</a>
+                <a href="index.html">配置</a>
+                <a href="main-console.html">控制台</a>
+                <a href="advanced-analysis.html">高级分析</a>
+                <a href="network.html">网络</a>
+                <a class="active" href="monitoring.html">监控</a>
+                <a href="analysis-report-clean.html">报告</a>
             </div>
         </div>
     </div>
@@ -273,7 +276,7 @@
         <!-- 实时监控指标 -->
         <div class="grid">
             <div class="card">
-                <h3>🔍 API监控</h3>
+                <h3>API监控</h3>
                 <div class="metric-value info" id="apiRps">--</div>
                 <div class="metric-label">每秒请求数 (RPS)</div>
                 <div style="margin-top: 1rem;">
@@ -283,7 +286,7 @@
             </div>
             
             <div class="card">
-                <h3>🧠 模型性能</h3>
+                <h3>模型性能</h3>
                 <div class="metric-value success" id="modelAccuracy">--</div>
                 <div class="metric-label">准确率 (%)</div>
                 <div style="margin-top: 1rem;">
@@ -293,7 +296,7 @@
             </div>
             
             <div class="card">
-                <h3>⚡ 系统资源</h3>
+                <h3>系统资源</h3>
                 <div class="metric-value warning" id="cpuUsage">--</div>
                 <div class="metric-label">CPU使用率 (%)</div>
                 <div style="margin-top: 1rem;">
@@ -303,7 +306,7 @@
             </div>
             
             <div class="card">
-                <h3>📊 业务指标</h3>
+                <h3> 业务指标</h3>
                 <div class="metric-value danger" id="fraudRate">--</div>
                 <div class="metric-label">欺诈检出率 (%)</div>
                 <div style="margin-top: 1rem;">
@@ -316,14 +319,14 @@
         <!-- 图表监控 -->
         <div class="grid">
             <div class="card">
-                <h3>📈 API性能趋势</h3>
+                <h3> API性能趋势</h3>
                 <div class="chart-container">
                     <canvas id="apiPerformanceChart"></canvas>
                 </div>
             </div>
             
             <div class="card">
-                <h3>🎯 欺诈检测统计</h3>
+                <h3> 欺诈检测统计</h3>
                 <div class="chart-container">
                     <canvas id="fraudStatsChart"></canvas>
                 </div>
@@ -333,9 +336,9 @@
         <!-- 告警和日志 -->
         <div class="card">
             <div class="tabs">
-                <div class="tab active" onclick="switchTab('alerts')">🚨 活跃告警</div>
-                <div class="tab" onclick="switchTab('logs')">📝 系统日志</div>
-                <div class="tab" onclick="switchTab('health')">💊 健康检查</div>
+                <div class="tab active" onclick="switchTab('alerts', this)">活跃告警</div>
+                <div class="tab" onclick="switchTab('logs', this)">系统日志</div>
+                <div class="tab" onclick="switchTab('health', this)"> 健康检查</div>
             </div>
             
             <div id="alerts-content" class="tab-content active">
@@ -405,19 +408,19 @@
 
         <!-- 操作面板 -->
         <div class="card">
-            <h3>🎛️ 系统操作</h3>
+            <h3> 系统操作</h3>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                 <button class="btn btn-primary" onclick="triggerModelRetrain()">
-                    🔄 重新训练模型
+                     重新训练模型
                 </button>
                 <button class="btn btn-success" onclick="clearCache()">
-                    🗑️ 清理缓存
+                     清理缓存
                 </button>
                 <button class="btn btn-primary" onclick="exportLogs()">
-                    📋 导出日志
+                     导出日志
                 </button>
                 <button class="btn btn-danger" onclick="triggerTestAlert()">
-                    ⚠️ 测试告警
+                    测试告警
                 </button>
             </div>
         </div>
@@ -446,14 +449,14 @@
                     datasets: [{
                         label: '响应时间 (ms)',
                         data: generateRandomData(12, 100, 300),
-                        borderColor: '#007bff',
-                        backgroundColor: 'rgba(0,123,255,0.1)',
+                        borderColor: '#000000',
+                        backgroundColor: 'rgba(0,0,0,0.08)',
                         tension: 0.4
                     }, {
                         label: '错误率 (%)',
                         data: generateRandomData(12, 0, 5),
-                        borderColor: '#dc3545',
-                        backgroundColor: 'rgba(220,53,69,0.1)',
+                        borderColor: '#777777',
+                        backgroundColor: 'rgba(120,120,120,0.15)',
                         tension: 0.4,
                         yAxisID: 'y1'
                     }]
@@ -487,12 +490,7 @@
                     labels: ['正常交易', '低风险', '中风险', '高风险'],
                     datasets: [{
                         data: [850, 95, 35, 20],
-                        backgroundColor: [
-                            '#28a745',
-                            '#ffc107', 
-                            '#fd7e14',
-                            '#dc3545'
-                        ]
+                        backgroundColor: ['#000000','#555555','#aaaaaa','#dddddd']
                     }]
                 },
                 options: {
@@ -565,18 +563,68 @@
         
         // 从API更新指标
         function updateMetricsFromAPI(data) {
+            // API 指标
             if (data.api_metrics) {
-                document.getElementById('apiRps').textContent = 
-                    Math.floor(data.api_metrics.requests_per_second || 0);
-                document.getElementById('avgResponseTime').textContent = 
-                    Math.floor(data.api_metrics.average_response_time || 0);
-                document.getElementById('errorRate').textContent = 
-                    ((data.api_metrics.error_rate || 0) * 100).toFixed(2);
+                const api = data.api_metrics;
+                // 使用 records_per_second 作为 RPS
+                const rps = api.records_per_second ?? api.requests_per_second ?? 0;
+                document.getElementById('apiRps').textContent = Math.floor(rps);
+                // 后端为毫秒字段：average_response_time_ms
+                const avgRt = api.average_response_time_ms ?? api.average_response_time ?? 0;
+                document.getElementById('avgResponseTime').textContent = Math.floor(avgRt);
+                document.getElementById('errorRate').textContent = ((api.error_rate || 0) * 100).toFixed(2);
+
+                // 可选：把最新点推入 API 趋势图
+                try {
+                    if (apiPerformanceChart) {
+                        const labels = apiPerformanceChart.data.labels;
+                        const dsRt = apiPerformanceChart.data.datasets[0];
+                        const dsErr = apiPerformanceChart.data.datasets[1];
+                        labels.push(new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }));
+                        dsRt.data.push(Number(avgRt) || 0);
+                        dsErr.data.push(((api.error_rate || 0) * 100).toFixed(2));
+                        if (labels.length > 20) { labels.shift(); dsRt.data.shift(); dsErr.data.shift(); }
+                        apiPerformanceChart.update('none');
+                    }
+                } catch (_) {}
+            }
+
+            // 系统资源
+            if (data.system_metrics) {
+                const sys = data.system_metrics;
+                if (typeof sys.cpu_usage_percent === 'number') {
+                    document.getElementById('cpuUsage').textContent = sys.cpu_usage_percent.toFixed(1);
+                }
+                if (typeof sys.memory_usage_percent === 'number') {
+                    document.getElementById('memoryUsage').textContent = sys.memory_usage_percent.toFixed(1);
+                }
+                if (typeof sys.disk_usage_percent === 'number') {
+                    document.getElementById('diskUsage').textContent = sys.disk_usage_percent.toFixed(1);
+                }
+            }
+
+            // 今日业务统计（来自数据库）
+            if (data.today) {
+                const tp = Number(data.today.today_processed || 0);
+                const tf = Number(data.today.today_fraud || 0);
+                document.getElementById('todayTransactions').textContent = tp.toLocaleString();
+                document.getElementById('highRiskCount').textContent = tf.toLocaleString();
+                const fr = tp > 0 ? (tf / tp * 100) : 0;
+                document.getElementById('fraudRate').textContent = fr.toFixed(1);
+
+                // 更新饼图：正常 = processed - fraud，高风险 = fraud，其它设为 0
+                try {
+                    if (fraudStatsChart) {
+                        const normal = Math.max(0, tp - tf);
+                        fraudStatsChart.data.datasets[0].data = [normal, 0, 0, tf];
+                        fraudStatsChart.update('none');
+                    }
+                } catch (_) {}
             }
         }
         
         // 切换标签页
-        function switchTab(tabName) {
+        function switchTab(tabName, el) {
             // 隐藏所有标签内容
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -589,7 +637,7 @@
             
             // 显示选中的标签内容
             document.getElementById(tabName + '-content').classList.add('active');
-            event.target.classList.add('active');
+            if (el) { el.classList.add('active'); }
             
             // 根据标签加载对应数据
             if (tabName === 'logs') {
@@ -600,34 +648,47 @@
         }
         
         // 刷新告警
-        function refreshAlerts() {
+        async function refreshAlerts() {
             const refreshIcon = document.getElementById('alertsRefresh');
             refreshIcon.className = 'refresh-indicator';
-            
-            setTimeout(() => {
+            try {
+                const res = await fetch('/api/monitoring/alerts?limit=50');
+                if (res.ok) {
+                    const data = await res.json();
+                    const list = document.getElementById('alertsList');
+                    if (data.items && data.items.length) {
+                        list.innerHTML = data.items.map(a => `
+                            <div class="alert ${a.level==='critical'?'alert-critical':(a.level==='warning'?'alert-warning':'alert-info')}">
+                                <strong>${a.title || '告警'}</strong>：${a.message || ''}
+                                <small style="float:right;">${new Date(a.time).toLocaleTimeString()}</small>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (_) {
+                // 保留原有默认示例
+            } finally {
                 refreshIcon.className = '';
-                // 这里可以实际调用API刷新告警数据
-            }, 1000);
+            }
         }
         
         // 加载系统日志
-        function loadSystemLogs() {
+        async function loadSystemLogs() {
             const logsList = document.getElementById('logsList');
-            
-            // 模拟日志数据
-            const logs = [
-                { time: new Date().toLocaleTimeString(), level: 'INFO', message: 'API request processed successfully', source: 'api' },
-                { time: new Date(Date.now() - 30000).toLocaleTimeString(), level: 'WARNING', message: 'High CPU usage detected', source: 'system' },
-                { time: new Date(Date.now() - 60000).toLocaleTimeString(), level: 'ERROR', message: 'Failed to connect to Redis', source: 'cache' },
-                { time: new Date(Date.now() - 120000).toLocaleTimeString(), level: 'INFO', message: 'Model inference completed', source: 'ml' },
-                { time: new Date(Date.now() - 180000).toLocaleTimeString(), level: 'WARNING', message: 'Unusual transaction pattern detected', source: 'fraud' }
-            ];
-            
-            logsList.innerHTML = logs.map(log => `
-                <div class="log-entry ${log.level.toLowerCase()}">
-                    [${log.time}] ${log.level} [${log.source}]: ${log.message}
-                </div>
-            `).join('');
+            try {
+                const res = await fetch('/api/monitoring/logs?limit=100');
+                if (res.ok) {
+                    const data = await res.json();
+                    const items = data.items || [];
+                    logsList.innerHTML = items.map(log => `
+                        <div class="log-entry ${String(log.level||'info').toLowerCase()}">
+                            [${new Date(log.time).toLocaleTimeString()}] ${log.level || 'INFO'} [${log.source || 'sys'}]: ${log.message || ''}
+                        </div>
+                    `).join('');
+                    return;
+                }
+            } catch (_) {}
+            // 失败则保留为空或使用之前的模拟
         }
         
         // 刷新日志
@@ -644,16 +705,16 @@
         // 运行健康检查
         async function runHealthCheck() {
             try {
-                const response = await fetch('/health');
+                const response = await fetch('/healthz');
                 const data = await response.json();
                 
-                if (data.status === 'healthy') {
-                    alert('✅ 系统健康检查通过');
+                if (data.ok === true || data.status === 'healthy') {
+                    alert(' 系统健康检查通过');
                 } else {
-                    alert('⚠️ 系统健康检查发现问题');
+                    alert(' 系统健康检查发现问题');
                 }
             } catch (error) {
-                alert('❌ 健康检查失败：无法连接到服务器');
+                alert(' 健康检查失败：无法连接到服务器');
             }
         }
         
@@ -662,6 +723,8 @@
             setInterval(() => {
                 if (isAutoRefresh) {
                     loadMonitoringData();
+                    // 同步刷新告警列表
+                    refreshAlerts();
                 }
             }, 10000); // 每10秒刷新一次
         }
@@ -669,14 +732,14 @@
         // 系统操作函数
         function triggerModelRetrain() {
             if (confirm('确定要重新训练模型吗？这可能需要较长时间。')) {
-                alert('🔄 模型重训练已启动，请在日志中查看进度');
+                alert(' 模型重训练已启动，请在日志中查看进度');
                 // 实际调用API
             }
         }
         
         function clearCache() {
             if (confirm('确定要清理系统缓存吗？')) {
-                alert('🗑️ 缓存清理完成');
+                alert(' 缓存清理完成');
                 // 实际调用API
             }
         }
@@ -718,12 +781,12 @@
                 });
                 
                 if (response.ok) {
-                    alert('⚠️ 测试告警已发送');
+                    alert(' 测试告警已发送');
                 } else {
-                    alert('❌ 测试告警发送失败');
+                    alert(' 测试告警发送失败');
                 }
             } catch (error) {
-                alert('❌ 测试告警发送失败：' + error.message);
+                alert(' 测试告警发送失败：' + error.message);
             }
         }
     </script>

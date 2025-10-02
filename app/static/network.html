@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>交易网络关系图 - 黑白</title>
+  <link rel="stylesheet" href="css/common-blackwhite.css">
+  <style>
+    .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+    .page-title { font-size: 20px; font-weight: 600; margin: 12px 0; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin: 8px 0 16px; }
+    .btn { padding: 6px 10px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; }
+    .btn:hover { background: #f0f0f0; }
+    .network-svg-container { width: 100%; height: 520px; }
+    .legend { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; color: #333; font-size: 12px; }
+    .legend-color { width: 12px; height: 12px; display: inline-block; border: 1px solid #000; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="index.html">配置</a>
+      <a href="main-console.html">控制台</a>
+      <a href="advanced-analysis.html">高级分析</a>
+      <a href="monitoring.html">监控</a>
+      <a href="analysis-report-clean.html">报告</a>
+      <a href="network.html" class="active">网络</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="page-title">交易网络关系图</div>
+    <div class="toolbar">
+      <button id="load-all" class="btn">加载全量网络</button>
+      <button id="load-risk" class="btn">仅风险子图</button>
+      <label style="margin-left:8px; color:#555;">节点上限</label>
+      <input id="max-nodes" type="number" value="200" min="50" max="1000" step="50" style="width:90px;padding:4px;border:1px solid #ddd;">
+      <label style="margin-left:12px; color:#555;">风险阈值</label>
+      <input id="risk-threshold" type="number" value="0.85" min="0" max="1" step="0.05" style="width:80px;padding:4px;border:1px solid #ddd;">
+      <label style="margin-left:12px; color:#555; display:inline-flex; align-items:center; gap:6px;">
+        <input type="checkbox" id="use-fraud-flag" style="vertical-align:middle;"> 使用 is_fraud 标红
+      </label>
+      <label style="margin-left:8px; color:#555;">风险聚合</label>
+      <select id="risk-agg" style="padding:4px;border:1px solid #ddd;">
+        <option value="mean" selected>均值</option>
+        <option value="max">最大</option>
+      </select>
+      <label style="margin-left:12px; color:#555; display:inline-flex; align-items:center; gap:6px;">
+        <input type="checkbox" id="toggle-labels" style="vertical-align:middle;"> 显示所有标签
+      </label>
+      <label style="margin-left:12px; color:#555; display:inline-flex; align-items:center; gap:6px;">
+        <input type="checkbox" id="toggle-shape" style="vertical-align:middle;"> 按类型形状（账户圆/商户方）
+      </label>
+      <label style="margin-left:12px; color:#555; display:inline-flex; align-items:center; gap:6px;">
+        <input type="checkbox" id="toggle-bold" style="vertical-align:middle;"> 高风险加粗描边
+      </label>
+      <span style="margin-left:16px; color:#555;">账户ID</span>
+      <input id="ego-account" type="text" placeholder="acc_12345" style="width:160px;padding:4px;border:1px solid #ddd;">
+      <button id="load-ego" class="btn">查看周边</button>
+      <span style="margin-left:16px; color:#555;">链路: 起点</span>
+      <input id="chain-src" type="text" placeholder="acc_src" style="width:140px;padding:4px;border:1px solid #ddd;">
+      <span style="color:#555;">→ 终点</span>
+      <input id="chain-dst" type="text" placeholder="可选 acc_dst" style="width:160px;padding:4px;border:1px solid #ddd;">
+      <label style="color:#555;">跳数</label>
+      <input id="chain-hops" type="number" value="3" min="1" max="6" step="1" style="width:70px;padding:4px;border:1px solid #ddd;">
+      <button id="load-chain" class="btn">账户链路</button>
+    </div>
+
+    <div id="graph" class="network-svg-container"></div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-color" style="background:#000"></span>高风险</span>
+      <span class="legend-item"><span class="legend-color" style="background:#666"></span>中风险</span>
+      <span class="legend-item"><span class="legend-color" style="background:#ccc"></span>低风险</span>
+    </div>
+    <div id="meta" style="margin-top:10px;color:#666;font-size:12px;"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="js/network-graph.js"></script>
+  <script>
+    const containerId = 'graph';
+    const viz = new NetworkGraphVisualizer(containerId, 1100, 520);
+
+    async function fetchGraph({ riskOnly, maxNodes }) {
+      const threshold = parseFloat(document.getElementById('risk-threshold').value || '0.7');
+      const useFraud = document.getElementById('use-fraud-flag').checked;
+      const agg = document.getElementById('risk-agg').value || 'mean';
+      const url = `/api/network/graph?risk_only=${riskOnly?'true':'false'}&max_nodes=${maxNodes}`+
+        `&risk_threshold=${encodeURIComponent(threshold)}`+
+        `&use_fraud_flag=${useFraud?'true':'false'}`+
+        `&risk_agg=${encodeURIComponent(agg)}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('加载网络数据失败');
+      return await res.json();
+    }
+
+    function toD3Data(graph) {
+      // 将后端 nodes/edges 转为可视化需要的结构
+      const nodes = graph.nodes.map(n => ({
+        id: n.id,
+        group: n.type === 'account' ? 'account' : 'merchant',
+        degree: n.txn_count || 1,
+        riskScore: n.risk_score || 0,
+        riskLevel: n.risk_level || 'low'
+      }));
+      const links = (graph.edges || graph.links || []).map(e => ({
+        source: e.source,
+        target: e.target,
+        value: e.weight || 1,
+        riskLevel: 'low'
+      }));
+      return { nodes, links };
+    }
+
+    async function loadNetwork(riskOnly) {
+      const maxNodes = parseInt(document.getElementById('max-nodes').value || '200', 10);
+      const graph = await fetchGraph({ riskOnly, maxNodes });
+      const d3data = toD3Data(graph);
+      viz.nodes = d3data.nodes;
+      viz.links = d3data.links;
+      viz.renderNetwork();
+      const meta = document.getElementById('meta');
+      meta.textContent = `数据来源: ${graph.source || '未知'} | 节点: ${graph.nodes?.length || 0} | 边: ${(graph.edges?.length || graph.links?.length || 0)}`;
+    }
+
+    document.getElementById('load-all').onclick = () => loadNetwork(false);
+    document.getElementById('load-risk').onclick = () => loadNetwork(true);
+    document.getElementById('toggle-labels').onchange = (e) => {
+      viz.setShowAllLabels(e.target.checked);
+    };
+    document.getElementById('toggle-shape').onchange = (e) => {
+      viz.setShapeByType(e.target.checked);
+    };
+    document.getElementById('toggle-bold').onchange = (e) => {
+      viz.setBoldHighRisk(e.target.checked);
+    };
+    document.getElementById('load-ego').onclick = async () => {
+      const acc = document.getElementById('ego-account').value.trim();
+      const maxNodes = parseInt(document.getElementById('max-nodes').value || '200', 10);
+      if (!acc) { document.getElementById('meta').textContent = '请输入账户ID'; return; }
+      const url = `/api/network/ego?account_id=${encodeURIComponent(acc)}&depth=1&max_nodes=${maxNodes}&risk_only=false`;
+      const res = await fetch(url);
+      if (!res.ok) { document.getElementById('meta').textContent = '周边查询失败'; return; }
+      const graph = await res.json();
+      const d3data = toD3Data(graph);
+      viz.nodes = d3data.nodes;
+      viz.links = d3data.links;
+      viz.renderNetwork();
+      document.getElementById('meta').textContent = `账户 ${acc} 周边 | 节点: ${viz.nodes.length} | 边: ${viz.links.length}`;
+    };
+
+    // 账户链路图（账户→账户）
+    document.getElementById('load-chain').onclick = async () => {
+      const src = document.getElementById('chain-src').value.trim();
+      const dst = document.getElementById('chain-dst').value.trim();
+      const hops = parseInt(document.getElementById('chain-hops').value || '3', 10);
+      if (!src) { document.getElementById('meta').textContent = '请输入起点账户'; return; }
+      const url = `/api/network/chain?account_id=${encodeURIComponent(src)}&hops=${hops}` + (dst?`&target_account=${encodeURIComponent(dst)}`:'');
+      const res = await fetch(url);
+      if (!res.ok) { document.getElementById('meta').textContent = '链路查询失败'; return; }
+      const graph = await res.json();
+      const nodes = (graph.nodes||[]).map(n => ({ id:n.id, group:'account', degree:1, riskLevel:'low' }));
+      const links = (graph.edges||[]).map(e => ({ source:e.source, target:e.target, value:1 }));
+      viz.nodes = nodes; viz.links = links; viz.renderNetwork();
+      const pathCount = (graph.paths||[]).length;
+      document.getElementById('meta').textContent = `账户链路 | 起点: ${src} ${dst?`→ 终点: ${dst}`:''} | 路径数: ${pathCount} | 节点: ${nodes.length} | 边: ${links.length}`;
+    };
+
+    // 节点点击：若为账户，则自动查询其周边
+    window.onGraphNodeClick = async (node) => {
+      try {
+        if (node.group !== 'account') return;
+        const acc = node.id;
+        const maxNodes = parseInt(document.getElementById('max-nodes').value || '200', 10);
+        const url = `/api/network/ego?account_id=${encodeURIComponent(acc)}&depth=1&max_nodes=${maxNodes}&risk_only=false`;
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const graph = await res.json();
+        const d3data = toD3Data(graph);
+        viz.nodes = d3data.nodes;
+        viz.links = d3data.links;
+        viz.renderNetwork();
+        document.getElementById('ego-account').value = acc;
+        document.getElementById('meta').textContent = `账户 ${acc} 周边 | 节点: ${viz.nodes.length} | 边: ${viz.links.length}`;
+      } catch (e) {
+        console.warn('节点点击加载周边失败', e);
+      }
+    };
+
+    // 默认加载全量网络，便于观察灰/白层次
+    loadNetwork(false).catch(err => {
+      document.getElementById('meta').textContent = String(err);
+    });
+  </script>
+</body>
+</html>

@@ -1,4 +1,39 @@
-# Byte-compiled / optimized / DLL files
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.log
+.venv/
+venv/
+ENV/
+env/
+
+# VS Code
+.vscode/
+
+# Byte-compiled / cache
+.pytest_cache/
+.mypy_cache/
+
+# Local data & databases
+data/**
+!data/.gitkeep
+*.db
+*.sqlite
+*.sqlite3
+
+# Datasets / generated artifacts (keep examples, ignore large outputs)
+complex_transaction_dataset.json
+comprehensive_analysis_results.json
+
+# Docker
+*.pid
+
+# OS files
+Thumbs.db
+.DS_Store# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class

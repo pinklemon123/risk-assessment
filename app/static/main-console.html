@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能风险控制中心 - 纯黑白版本</title>
+    <link rel="stylesheet" href="css/common-blackwhite.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #e8f5e8;
+            color: #2d7d2d;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .main-tabs {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .tab-nav {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .tab-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .tab-btn.active {
+            background: white;
+            border-bottom: 3px solid #000;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 2rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+        }
+        
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+        
+        .metric-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 0.25rem;
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: #666;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            color: #333;
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .btn-primary {
+            background: #000;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #333;
+        }
+        
+        .action-panel {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+        
+        .results-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            min-height: 200px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 2rem;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #000, #333);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .fraud-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.875rem;
+            resize: vertical;
+        }
+        
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .config-item {
+            margin-bottom: 1rem;
+        }
+        
+        .config-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .config-item input, .config-item select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .report-preview {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            min-height: 300px;
+        }
+        
+        @media (max-width: 768px) {
+            .tab-nav {
+                flex-wrap: wrap;
+            }
+            
+            .tab-btn {
+                flex: none;
+                min-width: 120px;
+            }
+            
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                 智能风险控制中心
+            </div>
+            <div class="header-actions">
+                <div class="status-indicator" id="systemStatus">
+                    <span></span>
+                    <span>系统运行正常</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header" style="border-top: 1px solid #eee;">
+        <div class="header-content">
+            <div class="nav-links" style="display:flex;gap:1rem;">
+                <a href="index.html">配置</a>
+                <a class="active" href="main-console.html">控制台</a>
+                <a href="advanced-analysis.html">高级分析</a>
+                <a href="network.html">网络</a>
+                <a href="monitoring.html">监控</a>
+                <a href="analysis-report-clean.html">报告</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-tabs">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('dashboard')">
+                     控制面板
+                </button>
+                <button class="tab-btn" onclick="switchTab('detection')">
+                     欺诈检测
+                </button>
+                <button class="tab-btn" onclick="switchTab('analysis')">
+                     高级分析
+                </button>
+                <button class="tab-btn" onclick="switchTab('monitoring')">
+                     系统监控
+                </button>
+                <button class="tab-btn" onclick="switchTab('config')">
+                     系统配置
+                </button>
+            </div>
+
+            <!-- 控制面板 -->
+            <div id="dashboard" class="tab-content active">
+                <h2> 系统概览</h2>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3> 实时监控</h3>
+                        <div class="metric-grid" id="realtimeMetrics">
+                            <div class="loading">加载中...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3> 今日统计</h3>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="todayTransactions">--</div>
+                                <div class="metric-label">处理交易</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="todayFraud">--</div>
+                                <div class="metric-label">发现欺诈</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="systemUptime">--</div>
+                                <div class="metric-label">系统运行时间</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>快速操作</h3>
+                    <div class="action-panel">
+                        <button class="btn btn-primary" onclick="switchTab('detection')"> 开始检测</button>
+                        <button class="btn btn-primary" onclick="runAdvancedAnalysis()"> 运行高级分析</button>
+                        <button class="btn" onclick="generateReport()"> 生成报告</button>
+                        <button class="btn" onclick="switchTab('monitoring')"> 查看监控</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 欺诈检测 -->
+            <div id="detection" class="tab-content">
+                <h2> 欺诈检测</h2>
+                <div class="card">
+                    <h3>输入交易数据</h3>
+                    <textarea class="fraud-input" id="transactionInput" 
+                        placeholder='请输入交易数据 (JSON格式)，例如：
+{
+  "transactions": [
+    {
+      "id": "txn_001",
+      "amount": 1000,
+      "currency": "CNY",
+      "timestamp": "2025-09-29T10:00:00Z",
+      "account_id": "acc_123",
+      "merchant_id": "mer_456"
+    }
+  ]
+}'></textarea>
+                    
+                    <div class="action-panel">
+                        <button class="btn btn-primary" onclick="runFraudDetection()">开始检测</button>
+                        <button class="btn" onclick="loadSampleData()">加载示例</button>
+                        <button class="btn" onclick="clearInput()">清空</button>
+                    </div>
+                    
+                    <div id="detectionResults" class="results-container">
+                        <div class="loading">点击"开始检测"来分析交易数据</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 高级分析 -->
+            <div id="analysis" class="tab-content">
+                <h2> 高级分析</h2>
+                <div class="card">
+                    <h3>复杂算法分析</h3>
+                    <p style="margin-bottom: 1rem; color: #666;">
+                        运行机器学习、网络分析和时序分析算法，需要真实的计算时间
+                    </p>
+                    
+                    <div class="config-item">
+                        <label for="analysisType">分析类型:</label>
+                        <select id="analysisType">
+                            <option value="comprehensive"> 全面分析 (网络+时序+ML)</option>
+                            <option value="network_only"> 仅网络分析</option>
+                            <option value="ml_only"> 仅机器学习</option>
+                            <option value="time_only"> 仅时序分析</option>
+                        </select>
+                    </div>
+                    
+                    <div class="data-prepare-panel" style="margin-bottom: 1rem;">
+                        <h4>数据准备</h4>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn" onclick="loadQuickSample()">快速示例数据</button>
+                            <button class="btn" onclick="window.open('advanced-analysis.html', '_blank')">高级数据管理</button>
+                            <span id="dataStatus" style="margin-left: 1rem; color: #666; font-size: 0.875rem;"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-panel">
+                        <button class="btn btn-primary" id="startAnalysisBtn" onclick="runAdvancedAnalysis()">开始分析</button>
+                        <button class="btn" onclick="viewAnalysisReport()">查看报告</button>
+                    </div>
+                    
+                    <div id="analysisProgress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div id="progressText">准备中...</div>
+                    </div>
+                    
+                    <div id="analysisResults" class="results-container">
+                        <div class="loading">点击"开始分析"运行复杂算法</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 系统监控 -->
+            <div id="monitoring" class="tab-content">
+                <h2> 系统监控</h2>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3> 性能指标</h3>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3> 系统日志</h3>
+                        <div id="systemLogs" style="height: 300px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; background: #f8f9fa; padding: 1rem; border-radius: 6px;">
+                            <div class="loading">加载日志...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 系统配置 -->
+            <div id="config" class="tab-content">
+                <h2> 系统配置</h2>
+                <div class="config-grid">
+                    <div class="card">
+                        <h3> 风控参数</h3>
+                        <div class="config-item">
+                            <label>风险阈值:</label>
+                            <input type="range" id="riskThreshold" min="0" max="1" step="0.1" value="0.7">
+                            <span id="riskThresholdValue">0.7</span>
+                        </div>
+                        <div class="config-item">
+                            <label>检测模式:</label>
+                            <select id="detectionMode">
+                                <option value="strict">严格模式</option>
+                                <option value="balanced" selected>平衡模式</option>
+                                <option value="loose">宽松模式</option>
+                            </select>
+                        </div>
+                        <div class="config-item">
+                            <label>批处理大小:</label>
+                            <input type="number" id="batchSize" value="1000" min="100" max="10000">
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3> 分析配置</h3>
+                        <div class="config-item">
+                            <label>ML模型:</label>
+                            <select id="mlModel">
+                                <option value="random_forest" selected>随机森林</option>
+                                <option value="gradient_boost">梯度提升</option>
+                                <option value="neural_network">神经网络</option>
+                            </select>
+                        </div>
+                        <div class="config-item">
+                            <label>时序窗口 (小时):</label>
+                            <input type="number" id="timeWindow" value="24" min="1" max="168">
+                        </div>
+                        <div class="config-item">
+                            <label>网络密度阈值:</label>
+                            <input type="number" id="networkDensity" value="0.1" min="0.01" max="1" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3> 配置管理</h3>
+                    <div class="action-panel">
+                        <button class="btn btn-primary" onclick="saveConfiguration()">保存配置</button>
+                        <button class="btn" onclick="loadConfiguration()">加载配置</button>
+                        <button class="btn" onclick="resetConfiguration()">重置默认</button>
+                        <button class="btn" onclick="exportConfiguration()">导出配置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局状态
+        let currentAnalysisId = null;
+        let systemMetrics = {};
+        
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            loadSystemMetrics();
+            startMetricsUpdater();
+            checkMainConsoleDataStatus(); // 检查数据状态
+            
+            // 配置滑块事件
+            document.getElementById('riskThreshold').addEventListener('input', function(e) {
+                document.getElementById('riskThresholdValue').textContent = e.target.value;
+            });
+        });
+        
+        // 标签切换
+        function switchTab(tabName) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 移除所有标签按钮的激活状态
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 显示选中的标签
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // 根据标签加载相应数据
+            switch(tabName) {
+                case 'dashboard':
+                    loadSystemMetrics();
+                    break;
+                case 'monitoring':
+                    loadMonitoringData();
+                    break;
+                case 'analysis':
+                    checkAnalysisStatus();
+                    break;
+            }
+        }
+        
+        // 初始化控制面板
+        function initializeDashboard() {
+            document.getElementById('todayTransactions').textContent = '1,234';
+            document.getElementById('todayFraud').textContent = '23';
+            document.getElementById('systemUptime').textContent = '99.9%';
+        }
+        
+        // 加载系统指标
+        async function loadSystemMetrics() {
+            try {
+                const response = await fetch('/api/monitoring/dashboard');
+                const data = await response.json();
+                
+                const metricsHtml = `
+                    <div class="metric-item">
+                        <div class="metric-value">${data.cpu_percent}%</div>
+                        <div class="metric-label">CPU使用率</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">${data.memory_percent}%</div>
+                        <div class="metric-label">内存使用率</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">${data.total_transactions || 0}</div>
+                        <div class="metric-label">总交易数</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">${data.active_connections || 0}</div>
+                        <div class="metric-label">活跃连接</div>
+                    </div>
+                `;
+                
+                document.getElementById('realtimeMetrics').innerHTML = metricsHtml;
+                updateSystemStatus(data);
+            } catch (error) {
+                console.error('加载系统指标失败:', error);
+                document.getElementById('realtimeMetrics').innerHTML = '<div class="error-message">指标加载失败</div>';
+            }
+        }
+        
+        // 更新系统状态
+        function updateSystemStatus(data) {
+            const statusEl = document.getElementById('systemStatus');
+            if (data.cpu_percent < 80 && data.memory_percent < 80) {
+                statusEl.innerHTML = '<span></span><span>系统运行正常</span>';
+            } else if (data.cpu_percent < 90 && data.memory_percent < 90) {
+                statusEl.innerHTML = '<span></span><span>系统负载较高</span>';
+            } else {
+                statusEl.innerHTML = '<span></span><span>系统负载过高</span>';
+            }
+        }
+        
+        // 定时更新指标
+        function startMetricsUpdater() {
+            setInterval(() => {
+                if (document.getElementById('dashboard').classList.contains('active')) {
+                    loadSystemMetrics();
+                }
+            }, 5000); // 每5秒更新一次
+        }
+        
+        // 运行欺诈检测
+        async function runFraudDetection() {
+            const input = document.getElementById('transactionInput').value.trim();
+            const resultsEl = document.getElementById('detectionResults');
+            
+            if (!input) {
+                resultsEl.innerHTML = '<div class="error-message">请输入交易数据</div>';
+                return;
+            }
+            
+            resultsEl.innerHTML = '<div class="loading">正在分析交易数据...</div>';
+            
+            try {
+                const data = JSON.parse(input);
+                const response = await fetch('/api/fraud/assess', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                resultsEl.innerHTML = `
+                    <div class="success-message">
+                        <h4> 检测结果</h4>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value">${result.risk_score?.toFixed(3) || 'N/A'}</div>
+                                <div class="metric-label">风险分数</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">${result.risk_level || 'unknown'}</div>
+                                <div class="metric-label">风险等级</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">${result.confidence?.toFixed(3) || 'N/A'}</div>
+                                <div class="metric-label">置信度</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">${result.transaction_count || 0}</div>
+                                <div class="metric-label">分析交易数</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                resultsEl.innerHTML = `<div class="error-message">分析失败: ${error.message}</div>`;
+            }
+        }
+        
+        // 加载示例数据
+        function loadSampleData() {
+            const sample = {
+                "transactions": [
+                    {
+                        "id": "txn_001",
+                        "amount": 1000,
+                        "currency": "CNY",
+                        "timestamp": "2025-09-29T10:00:00Z",
+                        "account_id": "acc_123",
+                        "merchant_id": "mer_456",
+                        "location": "beijing"
+                    },
+                    {
+                        "id": "txn_002",
+                        "amount": 50000,
+                        "currency": "CNY",
+                        "timestamp": "2025-09-29T10:01:00Z",
+                        "account_id": "acc_123",
+                        "merchant_id": "mer_789",
+                        "location": "shanghai"
+                    }
+                ]
+            };
+            document.getElementById('transactionInput').value = JSON.stringify(sample, null, 2);
+        }
+        
+        // 清空输入
+        function clearInput() {
+            document.getElementById('transactionInput').value = '';
+            document.getElementById('detectionResults').innerHTML = '<div class="loading">点击"开始检测"来分析交易数据</div>';
+        }
+        
+        // 快速加载示例数据
+        async function loadQuickSample() {
+            const statusEl = document.getElementById('dataStatus');
+            
+            try {
+                statusEl.textContent = '正在生成示例数据...';
+                
+                const response = await fetch('/api/data/load-sample', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({size: 1000})
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    statusEl.textContent = `${result.message}`;
+                    statusEl.style.color = '#333';
+                } else {
+                    statusEl.textContent = `生成失败: ${result.message}`;
+                    statusEl.style.color = '#333';
+                }
+                
+            } catch (error) {
+                statusEl.textContent = `✗ 错误: ${error.message}`;
+                statusEl.style.color = '#dc3545';
+            }
+        }
+        
+        // 检查数据状态
+        async function checkMainConsoleDataStatus() {
+            try {
+                const response = await fetch('/api/advanced/analysis-status');
+                const status = await response.json();
+                
+                const statusEl = document.getElementById('dataStatus');
+                if (status.complex_dataset_exists) {
+                    const info = status.dataset_info;
+                    statusEl.textContent = `数据就绪 (${info.transaction_count?.toLocaleString()} 笔交易)`;
+                    statusEl.style.color = '#333';
+                } else {
+                    statusEl.textContent = '暂无数据，请先准备分析数据';
+                    statusEl.style.color = '#666';
+                }
+            } catch (error) {
+                console.error('检查数据状态失败:', error);
+            }
+        }
+        
+        // 运行高级分析
+        async function runAdvancedAnalysis() {
+            const btn = document.getElementById('startAnalysisBtn');
+            const analysisType = document.getElementById('analysisType').value;
+            const progressEl = document.getElementById('analysisProgress');
+            const resultsEl = document.getElementById('analysisResults');
+            
+            btn.disabled = true;
+            btn.textContent = ' 分析中...';
+            progressEl.style.display = 'block';
+            
+            try {
+                updateProgress('开始复杂分析...', 10);
+                
+                const response = await fetch('/api/advanced/complex-analysis', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        analysis_type: analysisType,
+                        data_source: 'complex_transaction_dataset.json'
+                    })
+                });
+                
+                updateProgress('执行算法...', 70);
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    updateProgress('分析完成!', 100);
+                    
+                    setTimeout(() => {
+                        progressEl.style.display = 'none';
+                        const summary = result.results.comprehensive_summary;
+                        
+                        resultsEl.innerHTML = `
+                            <div class="success-message">
+                                <h4> 高级分析完成</h4>
+                                <div class="metric-grid">
+                                    <div class="metric-item">
+                                        <div class="metric-value">${result.processing_time.toFixed(2)}s</div>
+                                        <div class="metric-label">处理时间</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">${summary.transactions_analyzed.toLocaleString()}</div>
+                                        <div class="metric-label">分析交易数</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">${summary.analysis_modules_completed}</div>
+                                        <div class="metric-label">分析模块</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">${Math.round(summary.performance_metrics.transactions_per_second)}</div>
+                                        <div class="metric-label">处理速度/秒</div>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 1rem;">
+                                    <button class="btn btn-primary" onclick="viewAnalysisReport()">查看详细报告</button>
+                                </div>
+                            </div>
+                        `;
+                    }, 1000);
+                } else {
+                    throw new Error(result.error || '分析失败');
+                }
+            } catch (error) {
+                progressEl.style.display = 'none';
+                resultsEl.innerHTML = `<div class="error-message">分析失败: ${error.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = ' 开始分析';
+            }
+        }
+        
+        // 更新进度
+        function updateProgress(text, percentage) {
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+        
+        // 查看分析报告
+        function viewAnalysisReport() {
+            window.open('analysis-report-clean.html', '_blank');
+        }
+        
+        // 生成报告
+        function generateReport() {
+            viewAnalysisReport();
+        }
+        
+        // 检查分析状态
+        async function checkAnalysisStatus() {
+            try {
+                const response = await fetch('/api/advanced/analysis-status');
+                const status = await response.json();
+                
+                if (status.analysis_results_exists) {
+                    document.getElementById('analysisResults').innerHTML = `
+                        <div class="success-message">
+                            发现已完成的分析结果，处理时间: ${status.last_analysis.total_processing_time.toFixed(2)}秒
+                            <div style="margin-top: 0.5rem;">
+                                <button class="btn btn-primary" onclick="viewAnalysisReport()">查看报告</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('检查分析状态失败:', error);
+            }
+        }
+        
+        // 加载监控数据
+        function loadMonitoringData() {
+            loadSystemLogs();
+            loadPerformanceChart();
+        }
+        
+        // 加载系统日志
+        async function loadSystemLogs() {
+            const logsEl = document.getElementById('systemLogs');
+            logsEl.innerHTML = '<div class="loading">加载日志...</div>';
+            
+            // 模拟日志数据
+            setTimeout(() => {
+                const logs = [
+                    '[2025-09-29 17:30:00] INFO: 系统启动完成',
+                    '[2025-09-29 17:30:01] INFO: 加载配置文件成功',
+                    '[2025-09-29 17:30:02] INFO: 数据库连接建立',
+                    '[2025-09-29 17:30:03] INFO: API服务启动，端口: 8080',
+                    '[2025-09-29 17:30:10] INFO: 处理欺诈检测请求',
+                    '[2025-09-29 17:30:15] INFO: 高级分析任务启动',
+                    '[2025-09-29 17:30:20] INFO: 机器学习模型加载完成'
+                ];
+                
+                logsEl.innerHTML = logs.map(log => `<div>${log}</div>`).join('');
+                logsEl.scrollTop = logsEl.scrollHeight;
+            }, 1000);
+        }
+        
+        // 加载性能图表
+        function loadPerformanceChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            // 模拟性能数据
+            const data = {
+                labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25', '10:30'],
+                datasets: [{
+                    label: 'CPU使用率 (%)',
+                    data: [45, 52, 48, 61, 55, 49, 63],
+                    borderColor: '#000',
+                    backgroundColor: 'rgba(0,0,0,0.1)'
+                }, {
+                    label: '内存使用率 (%)',
+                    data: [38, 42, 41, 45, 44, 43, 47],
+                    borderColor: '#666',
+                    backgroundColor: 'rgba(102,102,102,0.1)'
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 配置管理
+        function saveConfiguration() {
+            const config = {
+                riskThreshold: document.getElementById('riskThreshold').value,
+                detectionMode: document.getElementById('detectionMode').value,
+                batchSize: document.getElementById('batchSize').value,
+                mlModel: document.getElementById('mlModel').value,
+                timeWindow: document.getElementById('timeWindow').value,
+                networkDensity: document.getElementById('networkDensity').value
+            };
+            
+            localStorage.setItem('riskControlConfig', JSON.stringify(config));
+            alert('配置已保存');
+        }
+        
+        function loadConfiguration() {
+            const config = localStorage.getItem('riskControlConfig');
+            if (config) {
+                const settings = JSON.parse(config);
+                Object.keys(settings).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.value = settings[key];
+                        if (key === 'riskThreshold') {
+                            document.getElementById('riskThresholdValue').textContent = settings[key];
+                        }
+                    }
+                });
+                alert('配置已加载');
+            } else {
+                alert('未找到保存的配置');
+            }
+        }
+        
+        function resetConfiguration() {
+            document.getElementById('riskThreshold').value = '0.7';
+            document.getElementById('riskThresholdValue').textContent = '0.7';
+            document.getElementById('detectionMode').value = 'balanced';
+            document.getElementById('batchSize').value = '1000';
+            document.getElementById('mlModel').value = 'random_forest';
+            document.getElementById('timeWindow').value = '24';
+            document.getElementById('networkDensity').value = '0.1';
+            alert('配置已重置为默认值');
+        }
+        
+        function exportConfiguration() {
+            const config = {
+                riskThreshold: document.getElementById('riskThreshold').value,
+                detectionMode: document.getElementById('detectionMode').value,
+                batchSize: document.getElementById('batchSize').value,
+                mlModel: document.getElementById('mlModel').value,
+                timeWindow: document.getElementById('timeWindow').value,
+                networkDensity: document.getElementById('networkDensity').value,
+                exportTime: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(config, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'risk-control-config.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
